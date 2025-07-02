@@ -39,7 +39,7 @@ class Class(models.Model):
     grade = models.CharField(max_length=3, choices=GRADE_CHOICES)
     section = models.CharField(max_length=1, choices=SECTION_CHOICES)
     capacity = models.PositiveIntegerField(default=30, help_text="Maximum number of students")
-    teacher = models.CharField(max_length=100, blank=True, help_text="Assigned teacher")
+    teacher = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, blank=True, related_name='classes', help_text="Assigned teacher")
     room_number = models.CharField(max_length=10, blank=True)
     academic_year = models.CharField(max_length=9, default="2024-2025", help_text="e.g., 2024-2025")
     is_active = models.BooleanField(default=True)

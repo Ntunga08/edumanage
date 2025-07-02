@@ -1,0 +1,122 @@
+{% extends "home.html" %}
+{% block content %}
+  <!-- Main Content -->
+  <div class="ml-72 min-h-screen relative p-8">
+   
+
+    <!-- Classes Container -->
+    <section
+      id="classesContainer"
+      class="bg-white rounded-xl shadow-xl p-8 relative z-10 w-full"
+    >
+      <header class="mb-8 border-b-2 border-gray-200 pb-4">
+        <h2 class="text-3xl font-semibold text-gray-800">My Classes</h2>
+        <p class="text-gray-500 text-sm mt-1">
+          Classes assigned to you for the current academic year
+        </p>
+      </header>
+    <!-- Responsive adjustments are handled by Tailwind utility classes.
+        No custom <style> block is needed. -->
+      <div class="grid gap-8 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+        {% for class in classes %}
+          <div class="bg-white border border-gray-300 rounded-xl p-6 shadow-sm hover:shadow-lg transform hover:-translate-y-1 transition">
+            <div class="flex justify-between items-center mb-5">
+              <h3 class="text-xl font-semibold text-gray-800">{{ class.name }}</h3>
+              <span class="px-4 py-1 rounded-full bg-gradient-to-br from-indigo-500 to-purple-700 text-white font-medium text-sm tracking-wide">
+                {{ class.code }}
+              </span>
+            </div>
+            <div class="grid grid-cols-2 gap-5 mb-5">
+              <div class="bg-gray-100 p-4 rounded-lg">
+                <span
+                  class="block text-gray-500 font-semibold text-xs mb-1"
+                  >Class Level</span
+                >
+                <span class="text-gray-800 font-semibold text-lg">{{ class.level }}</span>
+              </div>
+              <div class="bg-gray-100 p-4 rounded-lg">
+                <span
+                  class="block text-gray-500 font-semibold text-xs mb-1"
+                  >Room</span
+                >
+                <span class="text-gray-800 font-semibold text-lg">{{ class.room }}</span>
+              </div>
+            </div>
+            <div
+              class="flex justify-around bg-gradient-to-br from-gray-100 to-gray-200 p-5 rounded-lg mb-4"
+            >
+              <div class="text-center">
+                <span
+                  class="block text-3xl font-bold text-blue-600 mb-1"
+                  >{{ class.male_students }}</span
+                >
+                <span class="text-gray-600 font-semibold text-sm"
+                  >Male Students</span
+                >
+              </div>
+              <div class="text-center">
+                <span
+                  class="block text-3xl font-bold text-red-600 mb-1"
+                  >{{ class.female_students }}</span
+                >
+                <span class="text-gray-600 font-semibold text-sm"
+                  >Female Students</span
+                >
+              </div>
+              <div class="text-center">
+                <span
+                  class="block text-3xl font-bold text-green-700 mb-1"
+                  >{{ class.total_students }}</span
+                >
+                <span class="text-gray-600 font-semibold text-sm"
+                  >Total Students</span
+                >
+              </div>
+            </div>
+            <div class="bg-yellow-100 border border-yellow-300 rounded-lg p-4">
+              <div
+                class="text-yellow-700 font-semibold text-sm mb-2"
+                >Subjects I Teach:</div
+              >
+              {% for subject in class.subjects.all %}
+                <span
+                  class="inline-block bg-gradient-to-br from-yellow-500 to-orange-600 text-white rounded-full px-3 py-1 text-xs font-semibold mr-2 mb-1"
+                  >{{ subject.name }}</span
+                >
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+    </section>
+  </div>
+
+  <script>
+    function showClasses() {
+      document.getElementById("welcomeSection").style.display = "none";
+      document.getElementById("classesContainer").style.display = "block";
+
+      document.querySelectorAll(".nav-link").forEach((link) => {
+        link.classList.remove("active");
+      });
+
+      event.target.closest(".nav-link").classList.add("active");
+    }
+
+    document.querySelectorAll(".nav-link").forEach((link) => {
+      link.addEventListener("click", function (e) {
+        if (!this.textContent.trim().includes("Classes")) {
+          document.getElementById("welcomeSection").style.display = "block";
+          document.getElementById("classesContainer").style.display = "none";
+
+          document.querySelectorAll(".nav-link").forEach((l) =>
+            l.classList.remove("active")
+          );
+          this.classList.add("active");
+        }
+      });
+    });
+  </script>
+{% endblock %}

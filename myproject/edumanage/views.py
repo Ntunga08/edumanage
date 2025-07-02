@@ -22,7 +22,7 @@ def login(request):
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)
-            return redirect('dashboard')
+            return redirect('home')
     else:
         form = CustomAuthenticationForm()
     
@@ -109,3 +109,15 @@ def home(request):
         'school_name': 'EduManage Academy',
     }
     return render(request, 'home.html', context)
+
+@login_required
+def class_page(request):
+    user = request.user
+    classes = Class.objects.filter(teacher=user)
+    context = {
+        'user_name': user.username,
+        'user_initials': user.username[0].upper() if user.username else 'U',
+        'school_name': 'EduManage Academy',
+        'classes': classes,
+    }
+    return render(request, 'class.html', context)

@@ -1,6 +1,6 @@
 from django.urls import path
 from django.shortcuts import render
-from .views import register, login, login_success, dashboard, students, teachers, home
+from .views import register, login, login_success, dashboard, students, teachers, home, class_page
 
 urlpatterns = [
     path('', home, name='home'),  # Make home the default page after login
@@ -10,5 +10,6 @@ urlpatterns = [
     path('dashboard/', dashboard, name='dashboard'),
     path('students/', students, name='students'),
     path('teachers/', teachers, name='teachers'),
-    path('success/', lambda request: render(request, 'account/success.html'), name='success')
+    path('success/', lambda request: render(request, 'account/success.html'), name='success'),
+    path('class/', class_page, name='class'),
 ]
