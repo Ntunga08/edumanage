@@ -7,7 +7,7 @@
       <h1 class="text-3xl font-bold text-gray-800 mb-2">Subjects</h1>
       <p class="text-gray-600">All subjects taught in EduManage Academy</p>
       <div class="mt-4">
-        <span class="text-2xl font-bold text-indigo-600">{{ total_subjects }}</span>
+        <span class="text-2xl font-bold text-[#0369a1]">{{ total_subjects }}</span>
         <span class="text-gray-600 ml-2">Total Subjects</span>
       </div>
     </div>
@@ -21,7 +21,7 @@
             <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ subject_data.subject.name }}</h3>
             <p class="text-sm text-gray-600">Code: {{ subject_data.subject.code }}</p>
           </div>
-          <div class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+          <div class="bg-gradient-to-r from-[#0369a1] to-[#0ea5e9] text-white px-3 py-1 rounded-full text-sm font-medium">
             {{ subject_data.class_count }} classes
           </div>
         </div>
@@ -51,7 +51,7 @@
     {% if user.is_staff %}
     <div class="mt-8 text-center">
       <a href="/admin/edumanage/subject/add/" 
-         class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-lg hover:from-indigo-600 hover:to-purple-700 transition duration-200">
+         class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#0369a1] to-[#0ea5e9] text-white font-medium rounded-lg hover:from-[#0ea5e9] hover:to-[#0369a1] transition duration-200">
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
         </svg>
