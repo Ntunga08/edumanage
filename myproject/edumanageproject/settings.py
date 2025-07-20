@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-)im)ijk6$v+c(ah0a2*60l=_m+mav#+y!zml6o=c49^s5^*&a(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.248']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.246', '192.168.1.248', '0.0.0.0']
 
 
 # Application definition
@@ -129,3 +129,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom User Model
 AUTH_USER_MODEL = 'edumanage.User'
+
+# Login/Logout URLs
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'

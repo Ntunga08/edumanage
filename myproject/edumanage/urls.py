@@ -1,11 +1,18 @@
 from django.urls import path
 from django.shortcuts import render
+from django.contrib.auth import logout
+from django.shortcuts import redirect
 from .views import register, login, login_success, dashboard, students, teachers, subjects, home, class_page, class_detail
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
 
 urlpatterns = [
     path('', home, name='home'),  # Make home the default page after login
     path('register/', register, name='register'),
     path('login/', login, name='login'),
+    path('logout/', logout_view, name='logout'),
     path('login-success/', login_success, name='login_success'),
     path('dashboard/', dashboard, name='dashboard'),
     path('students/', students, name='students'),
