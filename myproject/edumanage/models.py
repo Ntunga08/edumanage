@@ -17,6 +17,20 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
+class Subject(models.Model):
+    name = models.CharField(max_length=100, unique=True, help_text="Subject name")
+    code = models.CharField(max_length=10, unique=True, help_text="Subject code")
+    description = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return f"{self.name} ({self.code})"
+
 class Class(models.Model):
     GRADE_CHOICES = [
         ('I', 'FORM I'),
@@ -40,6 +54,7 @@ class Class(models.Model):
     section = models.CharField(max_length=1, choices=SECTION_CHOICES)
     capacity = models.PositiveIntegerField(default=30, help_text="Maximum number of students")
     teacher = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, blank=True, related_name='classes', help_text="Assigned teacher")
+    subjects = models.ManyToManyField(Subject, related_name='classes', blank=True)
     room_number = models.CharField(max_length=10, blank=True)
     academic_year = models.CharField(max_length=9, default="2024-2025", help_text="e.g., 2024-2025")
     is_active = models.BooleanField(default=True)
@@ -124,3 +139,71 @@ class StudentClass(models.Model):
         if self.is_active and self.class_obj.current_students_count >= self.class_obj.capacity:
             raise ValueError(f"Class {self.class_obj.full_name} is at full capacity")
         super().save(*args, **kwargs)
+
+class Exam(models.Model):
+    EXAM_TYPE_CHOICES = [
+        ('midterm', 'Midterm'),
+        ('final', 'Final'),
+        ('quiz', 'Quiz'),
+        ('assignment', 'Assignment'),
+        ('project', 'Project'),
+    ]
+    
+    name = models.CharField(max_length=100, help_text="Exam name")
+    exam_type = models.CharField(max_length=20, choices=EXAM_TYPE_CHOICES)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='exams')
+    class_obj = models.ForeignKey(Class, on_delete=models.CASCADE, related_name='exams')
+    total_marks = models.PositiveIntegerField(default=100, help_text="Total marks for this exam")
+    exam_date = models.DateField()
+    description = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-exam_date']
+        unique_together = ['name', 'subject', 'class_obj', 'exam_date']
+
+    def __str__(self):
+        return f"{self.name} - {self.subject.name} ({self.class_obj.full_name})"
+
+class Result(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='results')
+    exam = models.ForeignKey(Exam, on_delete=models.CASCADE, related_name='results')
+    marks_obtained = models.DecimalField(max_digits=5, decimal_places=2, help_text="Marks obtained by student")
+    remarks = models.TextField(blank=True, help_text="Teacher remarks")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ['student', 'exam']
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.student.full_name} - {self.exam.name} ({self.marks_obtained}/{self.exam.total_marks})"
+    
+    @property
+    def percentage(self):
+        if self.exam.total_marks > 0:
+            return (self.marks_obtained / self.exam.total_marks) * 100
+        return 0
+    
+    @property
+    def grade(self):
+        percentage = self.percentage
+        if percentage >= 90:
+            return 'A+'
+        elif percentage >= 80:
+            return 'A'
+        elif percentage >= 70:
+            return 'B+'
+        elif percentage >= 60:
+            return 'B'
+        elif percentage >= 50:
+            return 'C+'
+        elif percentage >= 40:
+            return 'C'
+        elif percentage >= 30:
+            return 'D'
+        else:
+            return 'F'

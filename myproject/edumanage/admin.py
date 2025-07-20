@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, Class, Student, StudentClass
+from .models import User, Class, Student, StudentClass, Subject, Exam, Result
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
@@ -11,6 +11,14 @@ class UserAdmin(BaseUserAdmin):
     # list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
     pass
 
+@admin.register(Subject)
+class SubjectAdmin(admin.ModelAdmin):
+    list_display = ['name', 'code', 'is_active', 'created_at']
+    list_filter = ['is_active', 'created_at']
+    search_fields = ['name', 'code', 'description']
+    ordering = ['name']
+    readonly_fields = ['created_at', 'updated_at']
+
 @admin.register(Class)
 class ClassAdmin(admin.ModelAdmin):
     list_display = ['full_name', 'name', 'teacher', 'room_number', 'current_students_count', 'capacity', 'available_seats', 'academic_year', 'is_active']
@@ -18,6 +26,7 @@ class ClassAdmin(admin.ModelAdmin):
     search_fields = ['name', 'teacher', 'room_number']
     ordering = ['grade', 'section']
     readonly_fields = ['current_students_count', 'available_seats']
+    filter_horizontal = ['subjects']
     
     fieldsets = (
         ('Basic Information', {
@@ -25,6 +34,9 @@ class ClassAdmin(admin.ModelAdmin):
         }),
         ('Capacity & Teacher', {
             'fields': ('capacity', 'teacher', 'room_number')
+        }),
+        ('Subjects', {
+            'fields': ('subjects',)
         }),
         ('Status', {
             'fields': ('is_active',)
@@ -89,3 +101,56 @@ class StudentClassAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.select_related('student', 'class_obj')
+
+@admin.register(Exam)
+class ExamAdmin(admin.ModelAdmin):
+    list_display = ['name', 'exam_type', 'subject', 'class_obj', 'total_marks', 'exam_date', 'is_active']
+    list_filter = ['exam_type', 'exam_date', 'is_active', 'subject', 'class_obj__grade']
+    search_fields = ['name', 'subject__name', 'class_obj__name']
+    ordering = ['-exam_date']
+    readonly_fields = ['created_at', 'updated_at']
+    
+    autocomplete_fields = ['subject', 'class_obj']
+    
+    fieldsets = (
+        ('Exam Information', {
+            'fields': ('name', 'exam_type', 'subject', 'class_obj', 'total_marks', 'exam_date')
+        }),
+        ('Description', {
+            'fields': ('description',)
+        }),
+        ('Status', {
+            'fields': ('is_active',)
+        }),
+        ('System Information', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+@admin.register(Result)
+class ResultAdmin(admin.ModelAdmin):
+    list_display = ['student', 'exam', 'marks_obtained', 'percentage', 'grade', 'created_at']
+    list_filter = ['exam__exam_type', 'exam__subject', 'exam__class_obj__grade', 'created_at']
+    search_fields = ['student__first_name', 'student__last_name', 'student__student_id', 'exam__name']
+    ordering = ['-created_at']
+    readonly_fields = ['percentage', 'grade', 'created_at', 'updated_at']
+    
+    autocomplete_fields = ['student', 'exam']
+    
+    fieldsets = (
+        ('Result Information', {
+            'fields': ('student', 'exam', 'marks_obtained')
+        }),
+        ('Remarks', {
+            'fields': ('remarks',)
+        }),
+        ('Calculated Fields', {
+            'fields': ('percentage', 'grade'),
+            'classes': ('collapse',)
+        }),
+        ('System Information', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )

@@ -1,0 +1,73 @@
+{% extends "home.html" %}
+{% block content %}
+  <!-- Main Content -->
+  <div class="ml-72 min-h-screen relative p-8">
+    <!-- Students Header -->
+    <div class="bg-white rounded-xl shadow-xl p-8 mb-8">
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">Students</h1>
+      <p class="text-gray-600">All students enrolled in EduManage Academy</p>
+      <div class="mt-4">
+        <span class="text-2xl font-bold text-indigo-600">{{ total_students }}</span>
+        <span class="text-gray-600 ml-2">Total Students</span>
+      </div>
+    </div>
+
+    <!-- Students Grid -->
+    <div class="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      {% for student in all_students %}
+      <div class="bg-white rounded-xl shadow-xl p-6 hover:shadow-2xl transform hover:-translate-y-1 transition duration-300">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ student.full_name }}</h3>
+            <p class="text-sm text-gray-600">ID: {{ student.student_id }}</p>
+          </div>
+          <div class="text-right">
+            <span class="inline-block px-3 py-1 rounded-full text-xs font-medium 
+              {% if student.gender == 'M' %}bg-blue-100 text-blue-800{% else %}bg-pink-100 text-pink-800{% endif %}">
+              {{ student.gender }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="space-y-2 text-sm text-gray-600 mb-4">
+          <p><span class="font-medium">Age:</span> {{ student.age }} years</p>
+          <p><span class="font-medium">Enrolled:</span> {{ student.enrollment_date|date:"M d, Y" }}</p>
+          {% if student.email %}
+          <p><span class="font-medium">Email:</span> {{ student.email }}</p>
+          {% endif %}
+          {% if student.parent_name %}
+          <p><span class="font-medium">Parent:</span> {{ student.parent_name }}</p>
+          {% endif %}
+        </div>
+        
+        <div class="flex justify-between items-center text-sm text-gray-500">
+          <span class="px-2 py-1 rounded-full text-xs font-medium 
+            {% if student.is_active %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+            {% if student.is_active %}Active{% else %}Inactive{% endif %}
+          </span>
+          <span>Created: {{ student.created_at|date:"M d, Y" }}</span>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-span-full text-center py-12 text-gray-500">
+        <div class="text-4xl mb-2">👥</div>
+        <p>No students available</p>
+        <p class="text-sm mt-2">Add students through the admin interface</p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Add Student Button (Admin Only) -->
+    {% if user.is_staff %}
+    <div class="mt-8 text-center">
+      <a href="/admin/edumanage/student/add/" 
+         class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-lg hover:from-indigo-600 hover:to-purple-700 transition duration-200">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Add New Student
+      </a>
+    </div>
+    {% endif %}
+  </div>
+{% endblock %}

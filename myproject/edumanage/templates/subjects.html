@@ -1,0 +1,63 @@
+{% extends "home.html" %}
+{% block content %}
+  <!-- Main Content -->
+  <div class="ml-72 min-h-screen relative p-8">
+    <!-- Subjects Header -->
+    <div class="bg-white rounded-xl shadow-xl p-8 mb-8">
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">Subjects</h1>
+      <p class="text-gray-600">All subjects taught in EduManage Academy</p>
+      <div class="mt-4">
+        <span class="text-2xl font-bold text-indigo-600">{{ total_subjects }}</span>
+        <span class="text-gray-600 ml-2">Total Subjects</span>
+      </div>
+    </div>
+
+    <!-- Subjects Grid -->
+    <div class="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      {% for subject_data in subjects %}
+      <div class="bg-white rounded-xl shadow-xl p-6 hover:shadow-2xl transform hover:-translate-y-1 transition duration-300">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ subject_data.subject.name }}</h3>
+            <p class="text-sm text-gray-600">Code: {{ subject_data.subject.code }}</p>
+          </div>
+          <div class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+            {{ subject_data.class_count }} classes
+          </div>
+        </div>
+        
+        {% if subject_data.subject.description %}
+        <p class="text-gray-700 text-sm mb-4">{{ subject_data.subject.description }}</p>
+        {% endif %}
+        
+        <div class="flex justify-between items-center text-sm text-gray-500">
+          <span>Created: {{ subject_data.subject.created_at|date:"M d, Y" }}</span>
+          <span class="px-2 py-1 rounded-full text-xs font-medium 
+            {% if subject_data.subject.is_active %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+            {% if subject_data.subject.is_active %}Active{% else %}Inactive{% endif %}
+          </span>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-span-full text-center py-12 text-gray-500">
+        <div class="text-4xl mb-2">📚</div>
+        <p>No subjects available</p>
+        <p class="text-sm mt-2">Add subjects through the admin interface</p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Add Subject Button (Admin Only) -->
+    {% if user.is_staff %}
+    <div class="mt-8 text-center">
+      <a href="/admin/edumanage/subject/add/" 
+         class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-lg hover:from-indigo-600 hover:to-purple-700 transition duration-200">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Add New Subject
+      </a>
+    </div>
+    {% endif %}
+  </div>
+{% endblock %} 

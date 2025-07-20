@@ -1,0 +1,210 @@
+{% extends "home.html" %}
+{% load custom_filters %}
+{% block content %}
+  <!-- Main Content -->
+  <div class="ml-72 min-h-screen relative p-8">
+    <!-- Back Button -->
+    <div class="mb-6">
+      <a href="{% url 'class' %}" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-medium">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Back to Classes
+      </a>
+    </div>
+
+    <!-- Class Header -->
+    <div class="bg-white rounded-xl shadow-xl p-8 mb-8">
+      <div class="flex justify-between items-start mb-6">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ class_obj.name }}</h1>
+          <p class="text-gray-600 text-lg">{{ class_obj.full_name }} - Academic Year: {{ class_obj.academic_year }}</p>
+          <p class="text-gray-500">Room: {{ class_obj.room_number|default:"Not assigned" }}</p>
+        </div>
+        <div class="text-right">
+          <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-3 rounded-lg">
+            <div class="text-2xl font-bold">{{ overall_percentage }}%</div>
+            <div class="text-sm opacity-90">Class Average</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Class Statistics -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-blue-50 p-6 rounded-lg text-center">
+          <div class="text-3xl font-bold text-blue-600 mb-2">{{ total_students }}</div>
+          <div class="text-blue-700 font-medium">Total Students</div>
+        </div>
+        <div class="bg-green-50 p-6 rounded-lg text-center">
+          <div class="text-3xl font-bold text-green-600 mb-2">{{ male_count }}</div>
+          <div class="text-green-700 font-medium">Male Students</div>
+        </div>
+        <div class="bg-pink-50 p-6 rounded-lg text-center">
+          <div class="text-3xl font-bold text-pink-600 mb-2">{{ female_count }}</div>
+          <div class="text-pink-700 font-medium">Female Students</div>
+        </div>
+        <div class="bg-purple-50 p-6 rounded-lg text-center">
+          <div class="text-3xl font-bold text-purple-600 mb-2">{{ exams.count }}</div>
+          <div class="text-purple-700 font-medium">Total Exams</div>
+        </div>
+      </div>
+
+      <!-- Subjects -->
+      {% if class_obj.subjects.all %}
+      <div class="mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Subjects Taught</h3>
+        <div class="flex flex-wrap gap-3">
+          {% for subject in class_obj.subjects.all %}
+          <span class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-medium">
+            {{ subject.name }} ({{ subject.code }})
+          </span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Students and Results Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Students List -->
+      <div class="bg-white rounded-xl shadow-xl p-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Students</h2>
+        <div class="space-y-4">
+          {% for student in students %}
+          <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+            <div class="flex justify-between items-center">
+              <div>
+                <h4 class="font-semibold text-gray-800">{{ student.full_name }}</h4>
+                <p class="text-sm text-gray-600">ID: {{ student.student_id }}</p>
+                <p class="text-sm text-gray-500">{{ student.gender }} • Age: {{ student.age }}</p>
+              </div>
+              <div class="text-right">
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-medium 
+                  {% if student.gender == 'M' %}bg-blue-100 text-blue-800{% else %}bg-pink-100 text-pink-800{% endif %}">
+                  {{ student.gender }}
+                </span>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="text-center py-8 text-gray-500">
+            <div class="text-4xl mb-2">👥</div>
+            <p>No students enrolled in this class</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Recent Exams and Results -->
+      <div class="bg-white rounded-xl shadow-xl p-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Recent Exams & Results</h2>
+        {% if exams %}
+        <div class="space-y-6">
+          {% for exam in exams %}
+          <div class="border border-gray-200 rounded-lg p-4">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <h4 class="font-semibold text-gray-800">{{ exam.name }}</h4>
+                <p class="text-sm text-gray-600">{{ exam.subject.name }} • {{ exam.exam_type|title }}</p>
+                <p class="text-sm text-gray-500">{{ exam.exam_date }}</p>
+              </div>
+              <span class="px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                {{ exam.total_marks }} marks
+              </span>
+            </div>
+            
+            <!-- Results for this exam -->
+            <div class="bg-gray-50 rounded-lg p-3">
+              <h5 class="text-sm font-medium text-gray-700 mb-2">Student Results:</h5>
+              <div class="space-y-2">
+                {% for student in students %}
+                  {% for result in student_results|get_item:student.id %}
+                    {% if result.exam.id == exam.id %}
+                    <div class="flex justify-between items-center text-sm">
+                      <span class="text-gray-700">{{ student.full_name }}</span>
+                      <div class="flex items-center space-x-2">
+                        <span class="font-medium">{{ result.marks_obtained }}/{{ exam.total_marks }}</span>
+                        <span class="px-2 py-1 rounded text-xs font-medium 
+                          {% if result.percentage >= 70 %}bg-green-100 text-green-800
+                          {% elif result.percentage >= 50 %}bg-yellow-100 text-yellow-800
+                          {% else %}bg-red-100 text-red-800{% endif %}">
+                          {{ result.grade }}
+                        </span>
+                      </div>
+                    </div>
+                    {% endif %}
+                  {% endfor %}
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-8 text-gray-500">
+          <div class="text-4xl mb-2">📝</div>
+          <p>No exams scheduled for this class</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Performance Summary -->
+    {% if exams %}
+    <div class="mt-8 bg-white rounded-xl shadow-xl p-6">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Performance Summary</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-gray-200">
+              <th class="text-left py-3 px-4 font-semibold text-gray-700">Student</th>
+              {% for exam in exams %}
+              <th class="text-center py-3 px-2 font-semibold text-gray-700">{{ exam.name }}</th>
+              {% endfor %}
+              <th class="text-center py-3 px-4 font-semibold text-gray-700">Average</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for student in students %}
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+              <td class="py-3 px-4 font-medium text-gray-800">{{ student.full_name }}</td>
+              {% for exam in exams %}
+              <td class="text-center py-3 px-2">
+                {% for result in student_results|get_item:student.id %}
+                  {% if result.exam.id == exam.id %}
+                  <div class="flex flex-col items-center">
+                    <span class="font-medium">{{ result.marks_obtained }}/{{ exam.total_marks }}</span>
+                    <span class="text-xs px-2 py-1 rounded mt-1
+                      {% if result.percentage >= 70 %}bg-green-100 text-green-800
+                      {% elif result.percentage >= 50 %}bg-yellow-100 text-yellow-800
+                      {% else %}bg-red-100 text-red-800{% endif %}">
+                      {{ result.grade }}
+                    </span>
+                  </div>
+                  {% endif %}
+                {% endfor %}
+              </td>
+              {% endfor %}
+              <td class="text-center py-3 px-4 font-semibold">
+                {% for result in student_results|get_item:student.id %}
+                  {% if forloop.first %}
+                  <span class="text-lg">{{ result.percentage|floatformat:1 }}%</span>
+                  {% endif %}
+                {% endfor %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <script>
+    // Custom template filter to get dictionary items
+    function getItem(dictionary, key) {
+      return dictionary[key] || [];
+    }
+  </script>
+{% endblock %} 
