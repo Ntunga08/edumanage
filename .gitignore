@@ -1,62 +1,135 @@
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.pyc
-
 # Django
 *.log
 *.pot
 *.pyc
-*.pyo
-*.db
-*.sqlite3
-*.sqlite
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
 
-# Environment
-.env
-.env.*
+# Virtual Environment
 venv/
 env/
 ENV/
+env.bak/
+venv.bak/
 
-# VSCode
+# IDE
 .vscode/
-
-# PyCharm
 .idea/
+*.swp
+*.swo
+*~
 
-# macOS
+# OS
 .DS_Store
-
-# System
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# Migrations (optional, if you want to ignore compiled migrations)
-# */migrations/*.pyc
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Node
+# Django specific
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Temporary files
+*.tmp
+*.temp
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Secret keys and sensitive data
+secrets.json
+secret_key.txt
+
+# Node modules (if using any frontend tools)
 node_modules/
 
-# Coverage
+# Coverage reports
 htmlcov/
 .coverage
 .coverage.*
-.cache
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
 
-# Pip
-pip-log.txt
-pip-delete-this-directory.txt
+# Jupyter Notebook
+.ipynb_checkpoints
 
-# Test
-.tox/
+# pyenv
+.python-version
 
-# Others
-*.bak
-*.swp
-*.swo
+# pipenv
+Pipfile.lock
 
-# Static/media (if generated or uploaded)
-staticfiles/
-media/ 
+# PEP 582
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json 
