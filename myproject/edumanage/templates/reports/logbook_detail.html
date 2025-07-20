@@ -1,0 +1,260 @@
+{% extends "home.html" %}
+{% block content %}
+  <!-- Main Content -->
+  <div class="ml-72 min-h-screen relative p-4 lg:p-6">
+    <!-- Header -->
+    <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6 mb-4 lg:mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center">
+          <div class="text-2xl mr-3">📝</div>
+          <h1 class="text-3xl font-bold text-gray-800">Logbook Details</h1>
+        </div>
+        <div class="flex items-center space-x-3">
+          {% if logbook.status == 'draft' %}
+          <a href="{% url 'logbook_edit' logbook.id %}" 
+             class="inline-flex items-center px-4 py-2 bg-yellow-500 text-white font-medium rounded-lg hover:bg-yellow-600 transition duration-200">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            Edit
+          </a>
+          {% endif %}
+          
+          {% if logbook.status == 'draft' %}
+          <a href="{% url 'logbook_submit' logbook.id %}" 
+             class="inline-flex items-center px-4 py-2 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition duration-200">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+            </svg>
+            Submit
+          </a>
+          {% endif %}
+          
+          {% if logbook.status == 'submitted' and is_admin %}
+          <a href="{% url 'logbook_review' logbook.id %}" 
+             class="inline-flex items-center px-4 py-2 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition duration-200">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Review
+          </a>
+          {% endif %}
+          
+          <a href="{% url 'logbook_list' %}" 
+             class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition duration-200">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Back to List
+          </a>
+        </div>
+      </div>
+      
+      <!-- Status Badge -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <span class="px-4 py-2 rounded-full text-sm font-medium 
+            {% if logbook.status == 'draft' %}bg-gray-100 text-gray-800
+            {% elif logbook.status == 'submitted' %}bg-yellow-100 text-yellow-800
+            {% elif logbook.status == 'reviewed' %}bg-blue-100 text-blue-800
+            {% elif logbook.status == 'approved' %}bg-green-100 text-green-800
+            {% else %}bg-red-100 text-red-800{% endif %}">
+            {{ logbook.get_status_display }}
+          </span>
+          
+          <span class="px-4 py-2 rounded-full text-sm font-medium 
+            {% if logbook.report_type == 'daily' %}bg-blue-100 text-blue-800
+            {% elif logbook.report_type == 'weekly' %}bg-green-100 text-green-800
+            {% else %}bg-purple-100 text-purple-800{% endif %}">
+            {{ logbook.get_report_type_display }}
+          </span>
+        </div>
+        
+        <div class="text-sm text-gray-500">
+          Created: {{ logbook.created_at|date:"M d, Y H:i" }}
+          {% if logbook.submitted_at %}
+          <br>Submitted: {{ logbook.submitted_at|date:"M d, Y H:i" }}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Basic Information -->
+    <div class="grid gap-4 lg:gap-6 grid-cols-1 lg:grid-cols-2 mb-6">
+      <!-- Teacher & Subject Info -->
+      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Teacher & Subject Information</h2>
+        
+        <div class="space-y-4">
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-[#0369a1] rounded-full flex items-center justify-center text-white font-semibold text-lg mr-4">
+              {{ logbook.teacher.first_name|first|upper }}{{ logbook.teacher.last_name|first|upper }}
+            </div>
+            <div>
+              <p class="font-semibold text-gray-800">{{ logbook.teacher.get_full_name }}</p>
+              <p class="text-sm text-gray-500">{{ logbook.teacher.email }}</p>
+            </div>
+          </div>
+          
+          <div class="border-t border-gray-200 pt-4">
+            <div class="grid gap-3 grid-cols-1">
+              <div>
+                <span class="text-sm font-medium text-gray-500">Subject:</span>
+                <p class="text-lg font-semibold text-[#0369a1]">{{ logbook.subject.name }}</p>
+              </div>
+              
+              <div>
+                <span class="text-sm font-medium text-gray-500">Class:</span>
+                <p class="text-lg font-semibold text-gray-800">{{ logbook.class_obj.full_name }}</p>
+                <p class="text-sm text-gray-500">{{ logbook.class_obj.name }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Report Details -->
+      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Report Details</h2>
+        
+        <div class="space-y-4">
+          <div>
+            <span class="text-sm font-medium text-gray-500">Report Date:</span>
+            <p class="text-lg font-semibold text-gray-800">{{ logbook.report_date|date:"F d, Y" }}</p>
+          </div>
+          
+          <div>
+            <span class="text-sm font-medium text-gray-500">Academic Year:</span>
+            <p class="text-lg font-semibold text-gray-800">{{ logbook.academic_year }}</p>
+          </div>
+          
+          <div>
+            <span class="text-sm font-medium text-gray-500">Term:</span>
+            <p class="text-lg font-semibold text-gray-800">{{ logbook.term }}</p>
+          </div>
+          
+          <div>
+            <span class="text-sm font-medium text-gray-500">Report Type:</span>
+            <p class="text-lg font-semibold text-gray-800">{{ logbook.get_report_type_display }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Sections -->
+    <div class="space-y-6">
+      <!-- Topics Covered -->
+      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <div class="text-blue-500 mr-3">📚</div>
+          Topics Covered
+        </h2>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-gray-700 leading-relaxed">{{ logbook.topics_covered|linebreaks }}</p>
+        </div>
+      </div>
+
+      <!-- Activities Conducted -->
+      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <div class="text-green-500 mr-3">🎯</div>
+          Activities Conducted
+        </h2>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-gray-700 leading-relaxed">{{ logbook.activities_conducted|linebreaks }}</p>
+        </div>
+      </div>
+
+      <!-- Student Participation -->
+      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <div class="text-purple-500 mr-3">👥</div>
+          Student Participation
+        </h2>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-gray-700 leading-relaxed">{{ logbook.student_participation|linebreaks }}</p>
+        </div>
+      </div>
+
+      <!-- Challenges & Solutions -->
+      <div class="grid gap-6 grid-cols-1 lg:grid-cols-2">
+        <!-- Challenges Faced -->
+        <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <div class="text-red-500 mr-3">⚠️</div>
+            Challenges Faced
+          </h2>
+          <div class="bg-red-50 rounded-lg p-4">
+            <p class="text-gray-700 leading-relaxed">{{ logbook.challenges_faced|linebreaks }}</p>
+          </div>
+        </div>
+
+        <!-- Solutions Implemented -->
+        <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <div class="text-green-500 mr-3">✅</div>
+            Solutions Implemented
+          </h2>
+          <div class="bg-green-50 rounded-lg p-4">
+            <p class="text-gray-700 leading-relaxed">{{ logbook.solutions_implemented|linebreaks }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Next Lesson Plan -->
+      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <div class="text-blue-500 mr-3">📅</div>
+          Next Lesson Plan
+        </h2>
+        <div class="bg-blue-50 rounded-lg p-4">
+          <p class="text-gray-700 leading-relaxed">{{ logbook.next_lesson_plan|linebreaks }}</p>
+        </div>
+      </div>
+
+      <!-- Additional Notes -->
+      {% if logbook.additional_notes %}
+      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <div class="text-gray-500 mr-3">📝</div>
+          Additional Notes
+        </h2>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-gray-700 leading-relaxed">{{ logbook.additional_notes|linebreaks }}</p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Review Section (if reviewed) -->
+    {% if logbook.reviewed_by %}
+    <div class="mt-6 bg-white rounded-xl shadow-xl p-4 lg:p-6">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+        <div class="text-blue-500 mr-3">👨‍🏫</div>
+        Academic Master Review
+      </h2>
+      
+      <div class="grid gap-4 grid-cols-1 md:grid-cols-2">
+        <div>
+          <span class="text-sm font-medium text-gray-500">Reviewed by:</span>
+          <p class="font-semibold text-gray-800">{{ logbook.reviewed_by.get_full_name }}</p>
+        </div>
+        
+        <div>
+          <span class="text-sm font-medium text-gray-500">Reviewed on:</span>
+          <p class="font-semibold text-gray-800">{{ logbook.reviewed_at|date:"M d, Y H:i" }}</p>
+        </div>
+      </div>
+      
+      {% if logbook.review_comments %}
+      <div class="mt-4">
+        <span class="text-sm font-medium text-gray-500">Comments:</span>
+        <div class="bg-blue-50 rounded-lg p-4 mt-2">
+          <p class="text-gray-700 leading-relaxed">{{ logbook.review_comments|linebreaks }}</p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+{% endblock %} 

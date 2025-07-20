@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.db.models import Avg, Count, Q
-from .forms import CustomUserCreationForm, CustomAuthenticationForm
-from .models import User, Class, Student, StudentClass, Subject, Exam, Result
+from django.utils import timezone
+from django.http import JsonResponse
+from .forms import CustomUserCreationForm, CustomAuthenticationForm, TeacherLogbookForm, TeacherWorkplanForm, LogbookReviewForm, WorkplanReviewForm
+from .models import User, Class, Student, StudentClass, Subject, Exam, Result, TeacherLogbook, TeacherWorkplan
 
 def register(request):
     if request.method == "POST":
@@ -249,3 +252,276 @@ def class_detail(request, class_id):
         'overall_percentage': round(overall_percentage, 1),
     }
     return render(request, 'class_detail.html', context)
+
+# Reports System Views
+@login_required
+def reports_dashboard(request):
+    user = request.user
+    context = {
+        'user_name': user.username,
+        'user_initials': user.username[0].upper() if user.username else 'U',
+        'school_name': 'EduManage Academy',
+    }
+    return render(request, 'reports/dashboard.html', context)
+
+@login_required
+def logbook_list(request):
+    user = request.user
+    if user.is_staff:
+        # Admin can see all logbooks
+        logbooks = TeacherLogbook.objects.all().select_related('teacher', 'subject', 'class_obj').order_by('-created_at')
+    else:
+        # Teachers can only see their own logbooks
+        logbooks = TeacherLogbook.objects.filter(teacher=user).select_related('subject', 'class_obj').order_by('-created_at')
+    
+    context = {
+        'user_name': user.username,
+        'user_initials': user.username[0].upper() if user.username else 'U',
+        'school_name': 'EduManage Academy',
+        'logbooks': logbooks,
+        'is_admin': user.is_staff,
+    }
+    return render(request, 'reports/logbook_list.html', context)
+
+@login_required
+def logbook_create(request):
+    user = request.user
+    if request.method == 'POST':
+        form = TeacherLogbookForm(request.POST)
+        if form.is_valid():
+            logbook = form.save(commit=False)
+            logbook.teacher = user
+            logbook.save()
+            messages.success(request, 'Logbook created successfully!')
+            return redirect('logbook_list')
+    else:
+        form = TeacherLogbookForm()
+    
+    context = {
+        'user_name': user.username,
+        'user_initials': user.username[0].upper() if user.username else 'U',
+        'school_name': 'EduManage Academy',
+        'form': form,
+    }
+    return render(request, 'reports/logbook_form.html', context)
+
+@login_required
+def logbook_detail(request, logbook_id):
+    user = request.user
+    if user.is_staff:
+        logbook = get_object_or_404(TeacherLogbook, id=logbook_id)
+    else:
+        logbook = get_object_or_404(TeacherLogbook, id=logbook_id, teacher=user)
+    
+    context = {
+        'user_name': user.username,
+        'user_initials': user.username[0].upper() if user.username else 'U',
+        'school_name': 'EduManage Academy',
+        'logbook': logbook,
+        'is_admin': user.is_staff,
+    }
+    return render(request, 'reports/logbook_detail.html', context)
+
+@login_required
+def logbook_edit(request, logbook_id):
+    user = request.user
+    if user.is_staff:
+        logbook = get_object_or_404(TeacherLogbook, id=logbook_id)
+    else:
+        logbook = get_object_or_404(TeacherLogbook, id=logbook_id, teacher=user)
+    
+    if request.method == 'POST':
+        form = TeacherLogbookForm(request.POST, instance=logbook)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Logbook updated successfully!')
+            return redirect('logbook_detail', logbook_id=logbook.id)
+    else:
+        form = TeacherLogbookForm(instance=logbook)
+    
+    context = {
+        'user_name': user.username,
+        'user_initials': user.username[0].upper() if user.username else 'U',
+        'school_name': 'EduManage Academy',
+        'form': form,
+        'logbook': logbook,
+    }
+    return render(request, 'reports/logbook_form.html', context)
+
+@login_required
+def logbook_submit(request, logbook_id):
+    user = request.user
+    if user.is_staff:
+        logbook = get_object_or_404(TeacherLogbook, id=logbook_id)
+    else:
+        logbook = get_object_or_404(TeacherLogbook, id=logbook_id, teacher=user)
+    
+    if logbook.status == 'draft':
+        logbook.status = 'submitted'
+        logbook.submitted_at = timezone.now()
+        logbook.save()
+        messages.success(request, 'Logbook submitted successfully!')
+    else:
+        messages.warning(request, 'Logbook has already been submitted.')
+    
+    return redirect('logbook_detail', logbook_id=logbook.id)
+
+@login_required
+def logbook_review(request, logbook_id):
+    if not request.user.is_staff:
+        messages.error(request, 'Access denied. Only administrators can review logbooks.')
+        return redirect('logbook_list')
+    
+    logbook = get_object_or_404(TeacherLogbook, id=logbook_id)
+    
+    if request.method == 'POST':
+        form = LogbookReviewForm(request.POST, instance=logbook)
+        if form.is_valid():
+            logbook = form.save(commit=False)
+            logbook.reviewed_by = request.user
+            logbook.reviewed_at = timezone.now()
+            logbook.save()
+            messages.success(request, 'Logbook reviewed successfully!')
+            return redirect('logbook_detail', logbook_id=logbook.id)
+    else:
+        form = LogbookReviewForm(instance=logbook)
+    
+    context = {
+        'user_name': request.user.username,
+        'user_initials': request.user.username[0].upper() if request.user.username else 'U',
+        'school_name': 'EduManage Academy',
+        'form': form,
+        'logbook': logbook,
+    }
+    return render(request, 'reports/logbook_review.html', context)
+
+@login_required
+def workplan_list(request):
+    user = request.user
+    if user.is_staff:
+        # Admin can see all workplans
+        workplans = TeacherWorkplan.objects.all().select_related('teacher', 'subject', 'class_obj').order_by('-created_at')
+    else:
+        # Teachers can only see their own workplans
+        workplans = TeacherWorkplan.objects.filter(teacher=user).select_related('subject', 'class_obj').order_by('-created_at')
+    
+    context = {
+        'user_name': user.username,
+        'user_initials': user.username[0].upper() if user.username else 'U',
+        'school_name': 'EduManage Academy',
+        'workplans': workplans,
+        'is_admin': user.is_staff,
+    }
+    return render(request, 'reports/workplan_list.html', context)
+
+@login_required
+def workplan_create(request):
+    user = request.user
+    if request.method == 'POST':
+        form = TeacherWorkplanForm(request.POST)
+        if form.is_valid():
+            workplan = form.save(commit=False)
+            workplan.teacher = user
+            workplan.save()
+            messages.success(request, 'Workplan created successfully!')
+            return redirect('workplan_list')
+    else:
+        form = TeacherWorkplanForm()
+    
+    context = {
+        'user_name': user.username,
+        'user_initials': user.username[0].upper() if user.username else 'U',
+        'school_name': 'EduManage Academy',
+        'form': form,
+    }
+    return render(request, 'reports/workplan_form.html', context)
+
+@login_required
+def workplan_detail(request, workplan_id):
+    user = request.user
+    if user.is_staff:
+        workplan = get_object_or_404(TeacherWorkplan, id=workplan_id)
+    else:
+        workplan = get_object_or_404(TeacherWorkplan, id=workplan_id, teacher=user)
+    
+    context = {
+        'user_name': user.username,
+        'user_initials': user.username[0].upper() if user.username else 'U',
+        'school_name': 'EduManage Academy',
+        'workplan': workplan,
+        'is_admin': user.is_staff,
+    }
+    return render(request, 'reports/workplan_detail.html', context)
+
+@login_required
+def workplan_edit(request, workplan_id):
+    user = request.user
+    if user.is_staff:
+        workplan = get_object_or_404(TeacherWorkplan, id=workplan_id)
+    else:
+        workplan = get_object_or_404(TeacherWorkplan, id=workplan_id, teacher=user)
+    
+    if request.method == 'POST':
+        form = TeacherWorkplanForm(request.POST, instance=workplan)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Workplan updated successfully!')
+            return redirect('workplan_detail', workplan_id=workplan.id)
+    else:
+        form = TeacherWorkplanForm(instance=workplan)
+    
+    context = {
+        'user_name': user.username,
+        'user_initials': user.username[0].upper() if user.username else 'U',
+        'school_name': 'EduManage Academy',
+        'form': form,
+        'workplan': workplan,
+    }
+    return render(request, 'reports/workplan_form.html', context)
+
+@login_required
+def workplan_submit(request, workplan_id):
+    user = request.user
+    if user.is_staff:
+        workplan = get_object_or_404(TeacherWorkplan, id=workplan_id)
+    else:
+        workplan = get_object_or_404(TeacherWorkplan, id=workplan_id, teacher=user)
+    
+    if workplan.status == 'draft':
+        workplan.status = 'submitted'
+        workplan.submitted_at = timezone.now()
+        workplan.save()
+        messages.success(request, 'Workplan submitted successfully!')
+    else:
+        messages.warning(request, 'Workplan has already been submitted.')
+    
+    return redirect('workplan_detail', workplan_id=workplan.id)
+
+@login_required
+def workplan_review(request, workplan_id):
+    if not request.user.is_staff:
+        messages.error(request, 'Access denied. Only administrators can review workplans.')
+        return redirect('workplan_list')
+    
+    workplan = get_object_or_404(TeacherWorkplan, id=workplan_id)
+    
+    if request.method == 'POST':
+        form = WorkplanReviewForm(request.POST, instance=workplan)
+        if form.is_valid():
+            workplan = form.save(commit=False)
+            workplan.reviewed_by = request.user
+            workplan.reviewed_at = timezone.now()
+            workplan.save()
+            messages.success(request, 'Workplan reviewed successfully!')
+            return redirect('workplan_detail', workplan_id=workplan.id)
+    else:
+        form = WorkplanReviewForm(instance=workplan)
+    
+    context = {
+        'user_name': request.user.username,
+        'user_initials': request.user.username[0].upper() if request.user.username else 'U',
+        'school_name': 'EduManage Academy',
+        'form': form,
+        'workplan': workplan,
+    }
+    return render(request, 'reports/workplan_review.html', context)

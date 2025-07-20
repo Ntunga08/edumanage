@@ -1,0 +1,245 @@
+{% extends "home.html" %}
+{% block content %}
+  <!-- Main Content -->
+  <div class="ml-72 min-h-screen relative p-4 lg:p-6">
+    <!-- Header -->
+    <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6 mb-4 lg:mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center">
+          <div class="text-2xl mr-3">📝</div>
+          <h1 class="text-3xl font-bold text-gray-800">
+            {% if logbook %}Edit Logbook{% else %}Create New Logbook{% endif %}
+          </h1>
+        </div>
+        <a href="{% url 'logbook_list' %}" 
+           class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition duration-200">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Back to List
+        </a>
+      </div>
+      <p class="text-gray-600">
+        {% if logbook %}
+          Update your logbook details and content.
+        {% else %}
+          Create a comprehensive teaching logbook with detailed analysis of your lessons, challenges, and solutions.
+        {% endif %}
+      </p>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
+      <form method="post" class="space-y-6">
+        {% csrf_token %}
+        
+        <!-- Basic Information -->
+        <div class="border-b border-gray-200 pb-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">Basic Information</h2>
+          <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            <div>
+              <label for="{{ form.subject.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Subject *
+              </label>
+              {{ form.subject }}
+              {% if form.subject.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.subject.errors.0 }}</p>
+              {% endif %}
+            </div>
+            
+            <div>
+              <label for="{{ form.class_obj.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Class *
+              </label>
+              {{ form.class_obj }}
+              {% if form.class_obj.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.class_obj.errors.0 }}</p>
+              {% endif %}
+            </div>
+            
+            <div>
+              <label for="{{ form.report_type.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Report Type *
+              </label>
+              {{ form.report_type }}
+              {% if form.report_type.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.report_type.errors.0 }}</p>
+              {% endif %}
+            </div>
+            
+            <div>
+              <label for="{{ form.report_date.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Report Date *
+              </label>
+              {{ form.report_date }}
+              {% if form.report_date.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.report_date.errors.0 }}</p>
+              {% endif %}
+            </div>
+            
+            <div>
+              <label for="{{ form.academic_year.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Academic Year *
+              </label>
+              {{ form.academic_year }}
+              {% if form.academic_year.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.academic_year.errors.0 }}</p>
+              {% endif %}
+            </div>
+            
+            <div>
+              <label for="{{ form.term.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Term *
+              </label>
+              {{ form.term }}
+              {% if form.term.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.term.errors.0 }}</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Content Sections -->
+        <div class="space-y-6">
+          <!-- Topics Covered -->
+          <div>
+            <label for="{{ form.topics_covered.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Topics Covered *
+            </label>
+            {{ form.topics_covered }}
+            {% if form.topics_covered.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.topics_covered.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">Describe the topics covered in this period</p>
+          </div>
+
+          <!-- Activities Conducted -->
+          <div>
+            <label for="{{ form.activities_conducted.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Activities Conducted *
+            </label>
+            {{ form.activities_conducted }}
+            {% if form.activities_conducted.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.activities_conducted.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">Describe the activities and exercises conducted</p>
+          </div>
+
+          <!-- Student Participation -->
+          <div>
+            <label for="{{ form.student_participation.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Student Participation *
+            </label>
+            {{ form.student_participation }}
+            {% if form.student_participation.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.student_participation.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">Describe student participation and engagement</p>
+          </div>
+
+          <!-- Challenges Faced -->
+          <div>
+            <label for="{{ form.challenges_faced.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Challenges Faced *
+            </label>
+            {{ form.challenges_faced }}
+            {% if form.challenges_faced.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.challenges_faced.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">Describe any challenges or problems encountered</p>
+          </div>
+
+          <!-- Solutions Implemented -->
+          <div>
+            <label for="{{ form.solutions_implemented.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Solutions Implemented *
+            </label>
+            {{ form.solutions_implemented }}
+            {% if form.solutions_implemented.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.solutions_implemented.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">Describe solutions or strategies implemented</p>
+          </div>
+
+          <!-- Next Lesson Plan -->
+          <div>
+            <label for="{{ form.next_lesson_plan.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Next Lesson Plan *
+            </label>
+            {{ form.next_lesson_plan }}
+            {% if form.next_lesson_plan.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.next_lesson_plan.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">Describe your plan for the next lesson/period</p>
+          </div>
+
+          <!-- Additional Notes -->
+          <div>
+            <label for="{{ form.additional_notes.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Additional Notes
+            </label>
+            {{ form.additional_notes }}
+            {% if form.additional_notes.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.additional_notes.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">Any additional notes or observations (optional)</p>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+          <div class="flex items-center space-x-4">
+            <button type="submit" 
+                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#0369a1] to-[#0ea5e9] text-white font-medium rounded-xl hover:from-[#0ea5e9] hover:to-[#0369a1] transition duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              {% if logbook %}Update Logbook{% else %}Create Logbook{% endif %}
+            </button>
+            
+            <a href="{% url 'logbook_list' %}" 
+               class="inline-flex items-center px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition duration-200">
+              Cancel
+            </a>
+          </div>
+          
+          {% if logbook and logbook.status == 'draft' %}
+          <a href="{% url 'logbook_submit' logbook.id %}" 
+             class="inline-flex items-center px-6 py-3 bg-green-500 text-white font-medium rounded-xl hover:bg-green-600 transition duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+            </svg>
+            Submit for Review
+          </a>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+
+    <!-- Help Section -->
+    <div class="mt-6 bg-blue-50 rounded-xl p-4 lg:p-6">
+      <div class="flex items-center mb-3">
+        <div class="text-blue-500 mr-2">💡</div>
+        <h3 class="text-lg font-semibold text-gray-800">Tips for Writing Effective Logbooks</h3>
+      </div>
+      <div class="grid gap-3 grid-cols-1 md:grid-cols-2">
+        <div>
+          <h4 class="font-medium text-gray-700 mb-1">Be Specific</h4>
+          <p class="text-sm text-gray-600">Include specific details about topics, activities, and student responses.</p>
+        </div>
+        <div>
+          <h4 class="font-medium text-gray-700 mb-1">Analyze Challenges</h4>
+          <p class="text-sm text-gray-600">Identify problems and explain how you addressed them.</p>
+        </div>
+        <div>
+          <h4 class="font-medium text-gray-700 mb-1">Plan Ahead</h4>
+          <p class="text-sm text-gray-600">Outline clear plans for upcoming lessons based on current progress.</p>
+        </div>
+        <div>
+          <h4 class="font-medium text-gray-700 mb-1">Student Focus</h4>
+          <p class="text-sm text-gray-600">Describe student engagement and participation levels.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %} 

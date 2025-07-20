@@ -1,0 +1,239 @@
+{% extends "home.html" %}
+{% block content %}
+  <!-- Main Content -->
+  <div class="ml-72 min-h-screen relative p-4 lg:p-6">
+    <!-- Reports Header -->
+    <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6 mb-4 lg:mb-6 text-center">
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">Reports & Documentation</h1>
+      <p class="text-gray-600 mb-4">Teacher logbooks and workplans management system</p>
+      <div class="inline-flex items-center justify-center bg-blue-50 rounded-full px-6 py-3">
+        <span class="text-2xl font-bold text-[#0369a1] mr-2">📊</span>
+        <span class="text-gray-600 font-medium">Academic Reporting Center</span>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid gap-4 lg:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-6">
+      <!-- Total Logbooks -->
+      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6 text-center">
+        <div class="text-3xl text-[#0369a1] mb-2">📝</div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-1">Total Logbooks</h3>
+        <p class="text-2xl font-bold text-[#0369a1]">{{ logbooks_count|default:"0" }}</p>
+        <p class="text-sm text-gray-500 mt-1">Daily/Weekly Reports</p>
+      </div>
+
+      <!-- Total Workplans -->
+      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6 text-center">
+        <div class="text-3xl text-[#0369a1] mb-2">📋</div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-1">Total Workplans</h3>
+        <p class="text-2xl font-bold text-[#0369a1]">{{ workplans_count|default:"0" }}</p>
+        <p class="text-sm text-gray-500 mt-1">Term Plans</p>
+      </div>
+
+      <!-- Pending Reviews -->
+      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6 text-center">
+        <div class="text-3xl text-orange-500 mb-2">⏳</div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-1">Pending Reviews</h3>
+        <p class="text-2xl font-bold text-orange-500">{{ pending_reviews|default:"0" }}</p>
+        <p class="text-sm text-gray-500 mt-1">Awaiting Approval</p>
+      </div>
+
+      <!-- Approved Reports -->
+      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6 text-center">
+        <div class="text-3xl text-green-500 mb-2">✅</div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-1">Approved Reports</h3>
+        <p class="text-2xl font-bold text-green-500">{{ approved_reports|default:"0" }}</p>
+        <p class="text-sm text-gray-500 mt-1">Completed</p>
+      </div>
+    </div>
+
+    <!-- Main Actions Grid -->
+    <div class="grid gap-4 lg:gap-6 grid-cols-1 lg:grid-cols-2 mb-6">
+      <!-- Logbooks Section -->
+      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center">
+            <div class="text-2xl mr-3">📝</div>
+            <h2 class="text-xl font-bold text-gray-800">Teacher Logbooks</h2>
+          </div>
+          <a href="{% url 'logbook_create' %}" 
+             class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-[#0369a1] to-[#0ea5e9] text-white font-medium rounded-lg hover:from-[#0ea5e9] hover:to-[#0369a1] transition duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            New Logbook
+          </a>
+        </div>
+        
+        <p class="text-gray-600 mb-4">Daily, weekly, and monthly teaching reports with detailed analysis of challenges and solutions.</p>
+        
+        <div class="space-y-3">
+          <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center">
+              <div class="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+              <span class="text-sm font-medium text-gray-700">Daily Reports</span>
+            </div>
+            <span class="text-sm text-gray-500">{{ daily_logbooks|default:"0" }}</span>
+          </div>
+          
+          <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center">
+              <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+              <span class="text-sm font-medium text-gray-700">Weekly Reports</span>
+            </div>
+            <span class="text-sm text-gray-500">{{ weekly_logbooks|default:"0" }}</span>
+          </div>
+          
+          <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center">
+              <div class="w-3 h-3 bg-purple-500 rounded-full mr-3"></div>
+              <span class="text-sm font-medium text-gray-700">Monthly Reports</span>
+            </div>
+            <span class="text-sm text-gray-500">{{ monthly_logbooks|default:"0" }}</span>
+          </div>
+        </div>
+        
+        <div class="mt-4">
+          <a href="{% url 'logbook_list' %}" 
+             class="inline-flex items-center w-full justify-center px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition duration-200">
+            View All Logbooks
+            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Workplans Section -->
+      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center">
+            <div class="text-2xl mr-3">📋</div>
+            <h2 class="text-xl font-bold text-gray-800">Teacher Workplans</h2>
+          </div>
+          <a href="{% url 'workplan_create' %}" 
+             class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-[#0369a1] to-[#0ea5e9] text-white font-medium rounded-lg hover:from-[#0ea5e9] hover:to-[#0369a1] transition duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            New Workplan
+          </a>
+        </div>
+        
+        <p class="text-gray-600 mb-4">Beginning and end of term plans with learning objectives, achievements, and performance analysis.</p>
+        
+        <div class="space-y-3">
+          <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center">
+              <div class="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+              <span class="text-sm font-medium text-gray-700">Beginning of Term</span>
+            </div>
+            <span class="text-sm text-gray-500">{{ beginning_workplans|default:"0" }}</span>
+          </div>
+          
+          <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center">
+              <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+              <span class="text-sm font-medium text-gray-700">End of Term</span>
+            </div>
+            <span class="text-sm text-gray-500">{{ end_workplans|default:"0" }}</span>
+          </div>
+          
+          <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center">
+              <div class="w-3 h-3 bg-purple-500 rounded-full mr-3"></div>
+              <span class="text-sm font-medium text-gray-700">Mid Term</span>
+            </div>
+            <span class="text-sm text-gray-500">{{ mid_workplans|default:"0" }}</span>
+          </div>
+        </div>
+        
+        <div class="mt-4">
+          <a href="{% url 'workplan_list' %}" 
+             class="inline-flex items-center w-full justify-center px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition duration-200">
+            View All Workplans
+            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
+      <div class="flex items-center mb-4">
+        <div class="text-2xl mr-3">🕒</div>
+        <h2 class="text-xl font-bold text-gray-800">Recent Activity</h2>
+      </div>
+      
+      <div class="space-y-3">
+        {% if recent_logbooks %}
+          {% for logbook in recent_logbooks %}
+          <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center">
+              <div class="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+              <div>
+                <p class="text-sm font-medium text-gray-700">{{ logbook.teacher.get_full_name }} - {{ logbook.subject.name }}</p>
+                <p class="text-xs text-gray-500">{{ logbook.report_date|date:"M d, Y" }} - {{ logbook.get_report_type_display }}</p>
+              </div>
+            </div>
+            <span class="px-2 py-1 text-xs font-medium rounded-full 
+              {% if logbook.status == 'submitted' %}bg-yellow-100 text-yellow-800
+              {% elif logbook.status == 'approved' %}bg-green-100 text-green-800
+              {% elif logbook.status == 'rejected' %}bg-red-100 text-red-800
+              {% else %}bg-gray-100 text-gray-800{% endif %}">
+              {{ logbook.get_status_display }}
+            </span>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="text-center py-8">
+            <div class="text-4xl mb-2">📝</div>
+            <p class="text-gray-500">No recent activity</p>
+            <p class="text-sm text-gray-400">Start by creating your first logbook or workplan</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    {% if user.is_staff %}
+    <div class="mt-6 bg-white rounded-xl shadow-xl p-4 lg:p-6">
+      <div class="flex items-center mb-4">
+        <div class="text-2xl mr-3">⚡</div>
+        <h2 class="text-xl font-bold text-gray-800">Quick Actions (Admin)</h2>
+      </div>
+      
+      <div class="grid gap-3 grid-cols-1 md:grid-cols-3">
+        <a href="{% url 'logbook_list' %}" 
+           class="flex items-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition duration-200">
+          <div class="text-blue-500 mr-3">📝</div>
+          <div>
+            <p class="text-sm font-medium text-gray-700">Review Logbooks</p>
+            <p class="text-xs text-gray-500">Approve or reject submissions</p>
+          </div>
+        </a>
+        
+        <a href="{% url 'workplan_list' %}" 
+           class="flex items-center p-3 bg-green-50 rounded-lg hover:bg-green-100 transition duration-200">
+          <div class="text-green-500 mr-3">📋</div>
+          <div>
+            <p class="text-sm font-medium text-gray-700">Review Workplans</p>
+            <p class="text-xs text-gray-500">Evaluate term plans</p>
+          </div>
+        </a>
+        
+        <a href="#" 
+           class="flex items-center p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition duration-200">
+          <div class="text-purple-500 mr-3">📊</div>
+          <div>
+            <p class="text-sm font-medium text-gray-700">Generate Reports</p>
+            <p class="text-xs text-gray-500">Analytics and insights</p>
+          </div>
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+{% endblock %} 

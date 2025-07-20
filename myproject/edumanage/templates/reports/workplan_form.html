@@ -1,0 +1,308 @@
+{% extends "home.html" %}
+{% block content %}
+  <!-- Main Content -->
+  <div class="ml-72 min-h-screen relative p-4 lg:p-6">
+    <!-- Header -->
+    <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6 mb-4 lg:mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center">
+          <div class="text-2xl mr-3">📋</div>
+          <h1 class="text-3xl font-bold text-gray-800">
+            {% if workplan %}Edit Workplan{% else %}Create New Workplan{% endif %}
+          </h1>
+        </div>
+        <a href="{% url 'workplan_list' %}" 
+           class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition duration-200">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Back to List
+        </a>
+      </div>
+      <p class="text-gray-600">
+        {% if workplan %}
+          Update your workplan details and content.
+        {% else %}
+          Create a comprehensive teaching workplan with learning objectives, strategies, and assessment methods.
+        {% endif %}
+      </p>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
+      <form method="post" class="space-y-6">
+        {% csrf_token %}
+        
+        <!-- Basic Information -->
+        <div class="border-b border-gray-200 pb-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">Basic Information</h2>
+          <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            <div>
+              <label for="{{ form.subject.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Subject *
+              </label>
+              {{ form.subject }}
+              {% if form.subject.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.subject.errors.0 }}</p>
+              {% endif %}
+            </div>
+            
+            <div>
+              <label for="{{ form.class_obj.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Class *
+              </label>
+              {{ form.class_obj }}
+              {% if form.class_obj.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.class_obj.errors.0 }}</p>
+              {% endif %}
+            </div>
+            
+            <div>
+              <label for="{{ form.plan_type.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Plan Type *
+              </label>
+              {{ form.plan_type }}
+              {% if form.plan_type.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.plan_type.errors.0 }}</p>
+              {% endif %}
+            </div>
+            
+            <div>
+              <label for="{{ form.academic_year.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Academic Year *
+              </label>
+              {{ form.academic_year }}
+              {% if form.academic_year.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.academic_year.errors.0 }}</p>
+              {% endif %}
+            </div>
+            
+            <div>
+              <label for="{{ form.term.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Term *
+              </label>
+              {{ form.term }}
+              {% if form.term.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.term.errors.0 }}</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Planning Content -->
+        <div class="space-y-6">
+          <!-- Learning Objectives -->
+          <div>
+            <label for="{{ form.learning_objectives.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Learning Objectives *
+            </label>
+            {{ form.learning_objectives }}
+            {% if form.learning_objectives.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.learning_objectives.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">Describe the learning objectives for the term</p>
+          </div>
+
+          <!-- Topics to Cover -->
+          <div>
+            <label for="{{ form.topics_to_cover.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Topics to Cover *
+            </label>
+            {{ form.topics_to_cover }}
+            {% if form.topics_to_cover.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.topics_to_cover.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">List the topics to be covered during the term</p>
+          </div>
+
+          <!-- Teaching Methods -->
+          <div>
+            <label for="{{ form.teaching_methods.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Teaching Methods *
+            </label>
+            {{ form.teaching_methods }}
+            {% if form.teaching_methods.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.teaching_methods.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">Describe teaching methods and strategies to be used</p>
+          </div>
+
+          <!-- Assessment Methods -->
+          <div>
+            <label for="{{ form.assessment_methods.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Assessment Methods *
+            </label>
+            {{ form.assessment_methods }}
+            {% if form.assessment_methods.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.assessment_methods.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">Describe assessment methods and evaluation criteria</p>
+          </div>
+
+          <!-- Resources Needed -->
+          <div>
+            <label for="{{ form.resources_needed.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Resources Needed *
+            </label>
+            {{ form.resources_needed }}
+            {% if form.resources_needed.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.resources_needed.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">List resources and materials needed</p>
+          </div>
+
+          <!-- Timeline -->
+          <div>
+            <label for="{{ form.timeline.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Timeline *
+            </label>
+            {{ form.timeline }}
+            {% if form.timeline.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.timeline.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">Describe timeline and schedule for topics</p>
+          </div>
+        </div>
+
+        <!-- End of Term Analysis (for end of term workplans) -->
+        <div id="end-term-fields" class="space-y-6 border-t border-gray-200 pt-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">End of Term Analysis</h2>
+          
+          <!-- Achievements -->
+          <div>
+            <label for="{{ form.achievements.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Achievements
+            </label>
+            {{ form.achievements }}
+            {% if form.achievements.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.achievements.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">Describe achievements and successes (for end of term)</p>
+          </div>
+
+          <!-- Challenges Encountered -->
+          <div>
+            <label for="{{ form.challenges_encountered.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Challenges Encountered
+            </label>
+            {{ form.challenges_encountered }}
+            {% if form.challenges_encountered.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.challenges_encountered.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">Describe challenges and problems encountered (for end of term)</p>
+          </div>
+
+          <!-- Solutions Applied -->
+          <div>
+            <label for="{{ form.solutions_applied.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Solutions Applied
+            </label>
+            {{ form.solutions_applied }}
+            {% if form.solutions_applied.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.solutions_applied.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">Describe solutions and strategies applied (for end of term)</p>
+          </div>
+
+          <!-- Student Performance Analysis -->
+          <div>
+            <label for="{{ form.student_performance_analysis.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Student Performance Analysis
+            </label>
+            {{ form.student_performance_analysis }}
+            {% if form.student_performance_analysis.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.student_performance_analysis.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">Analyze student performance (for end of term)</p>
+          </div>
+
+          <!-- Recommendations -->
+          <div>
+            <label for="{{ form.recommendations.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+              Recommendations
+            </label>
+            {{ form.recommendations }}
+            {% if form.recommendations.errors %}
+              <p class="text-red-500 text-sm mt-1">{{ form.recommendations.errors.0 }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">Provide recommendations for improvement (for end of term)</p>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+          <div class="flex items-center space-x-4">
+            <button type="submit" 
+                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#0369a1] to-[#0ea5e9] text-white font-medium rounded-xl hover:from-[#0ea5e9] hover:to-[#0369a1] transition duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              {% if workplan %}Update Workplan{% else %}Create Workplan{% endif %}
+            </button>
+            
+            <a href="{% url 'workplan_list' %}" 
+               class="inline-flex items-center px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition duration-200">
+              Cancel
+            </a>
+          </div>
+          
+          {% if workplan and workplan.status == 'draft' %}
+          <a href="{% url 'workplan_submit' workplan.id %}" 
+             class="inline-flex items-center px-6 py-3 bg-green-500 text-white font-medium rounded-xl hover:bg-green-600 transition duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+            </svg>
+            Submit for Review
+          </a>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+
+    <!-- Help Section -->
+    <div class="mt-6 bg-blue-50 rounded-xl p-4 lg:p-6">
+      <div class="flex items-center mb-3">
+        <div class="text-blue-500 mr-2">💡</div>
+        <h3 class="text-lg font-semibold text-gray-800">Tips for Writing Effective Workplans</h3>
+      </div>
+      <div class="grid gap-3 grid-cols-1 md:grid-cols-2">
+        <div>
+          <h4 class="font-medium text-gray-700 mb-1">Clear Objectives</h4>
+          <p class="text-sm text-gray-600">Set specific, measurable learning objectives for the term.</p>
+        </div>
+        <div>
+          <h4 class="font-medium text-gray-700 mb-1">Comprehensive Planning</h4>
+          <p class="text-sm text-gray-600">Include all topics, methods, and assessment strategies.</p>
+        </div>
+        <div>
+          <h4 class="font-medium text-gray-700 mb-1">Realistic Timeline</h4>
+          <p class="text-sm text-gray-600">Create a feasible schedule that accounts for all activities.</p>
+        </div>
+        <div>
+          <h4 class="font-medium text-gray-700 mb-1">Resource Planning</h4>
+          <p class="text-sm text-gray-600">Identify all materials and resources needed for implementation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Show/hide end of term fields based on plan type
+    document.addEventListener('DOMContentLoaded', function() {
+      const planTypeSelect = document.getElementById('{{ form.plan_type.id_for_label }}');
+      const endTermFields = document.getElementById('end-term-fields');
+      
+      function toggleEndTermFields() {
+        const selectedValue = planTypeSelect.value;
+        if (selectedValue === 'end_term') {
+          endTermFields.style.display = 'block';
+        } else {
+          endTermFields.style.display = 'none';
+        }
+      }
+      
+      planTypeSelect.addEventListener('change', toggleEndTermFields);
+      toggleEndTermFields(); // Initial state
+    });
+  </script>
+{% endblock %} 

@@ -207,3 +207,109 @@ class Result(models.Model):
             return 'D'
         else:
             return 'F'
+
+# New Models for Reports System
+class TeacherLogbook(models.Model):
+    REPORT_TYPE_CHOICES = [
+        ('daily', 'Daily Report'),
+        ('weekly', 'Weekly Report'),
+        ('monthly', 'Monthly Report'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('draft', 'Draft'),
+        ('submitted', 'Submitted'),
+        ('reviewed', 'Reviewed'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    
+    teacher = models.ForeignKey(User, on_delete=models.CASCADE, related_name='logbooks')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='logbooks')
+    class_obj = models.ForeignKey(Class, on_delete=models.CASCADE, related_name='logbooks')
+    report_type = models.CharField(max_length=20, choices=REPORT_TYPE_CHOICES, default='daily')
+    report_date = models.DateField()
+    academic_year = models.CharField(max_length=9, default="2024-2025")
+    term = models.CharField(max_length=20, default="Term 1")
+    
+    # Content fields
+    topics_covered = models.TextField(help_text="Topics covered in this period")
+    activities_conducted = models.TextField(help_text="Activities and exercises conducted")
+    student_participation = models.TextField(help_text="Student participation and engagement")
+    challenges_faced = models.TextField(help_text="Challenges or problems encountered")
+    solutions_implemented = models.TextField(help_text="Solutions or strategies implemented")
+    next_lesson_plan = models.TextField(help_text="Plan for next lesson/period")
+    additional_notes = models.TextField(blank=True, help_text="Any additional notes or observations")
+    
+    # Status and approval
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    submitted_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='received_logbooks')
+    submitted_at = models.DateTimeField(null=True, blank=True)
+    reviewed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='reviewed_logbooks')
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    review_comments = models.TextField(blank=True, help_text="Comments from academic master")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-report_date', '-created_at']
+        verbose_name_plural = "Teacher Logbooks"
+
+    def __str__(self):
+        return f"{self.teacher.get_full_name()} - {self.subject.name} ({self.class_obj.full_name}) - {self.report_date}"
+
+class TeacherWorkplan(models.Model):
+    PLAN_TYPE_CHOICES = [
+        ('beginning_term', 'Beginning of Term'),
+        ('end_term', 'End of Term'),
+        ('mid_term', 'Mid Term'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('draft', 'Draft'),
+        ('submitted', 'Submitted'),
+        ('reviewed', 'Reviewed'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    
+    teacher = models.ForeignKey(User, on_delete=models.CASCADE, related_name='workplans')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='workplans')
+    class_obj = models.ForeignKey(Class, on_delete=models.CASCADE, related_name='workplans')
+    plan_type = models.CharField(max_length=20, choices=PLAN_TYPE_CHOICES)
+    academic_year = models.CharField(max_length=9, default="2024-2025")
+    term = models.CharField(max_length=20, default="Term 1")
+    
+    # Content fields
+    learning_objectives = models.TextField(help_text="Learning objectives for the term")
+    topics_to_cover = models.TextField(help_text="Topics to be covered during the term")
+    teaching_methods = models.TextField(help_text="Teaching methods and strategies to be used")
+    assessment_methods = models.TextField(help_text="Assessment methods and evaluation criteria")
+    resources_needed = models.TextField(help_text="Resources and materials needed")
+    timeline = models.TextField(help_text="Timeline and schedule for topics")
+    
+    # For end of term reports
+    achievements = models.TextField(blank=True, help_text="Achievements and successes (for end of term)")
+    challenges_encountered = models.TextField(blank=True, help_text="Challenges and problems encountered (for end of term)")
+    solutions_applied = models.TextField(blank=True, help_text="Solutions and strategies applied (for end of term)")
+    student_performance_analysis = models.TextField(blank=True, help_text="Analysis of student performance (for end of term)")
+    recommendations = models.TextField(blank=True, help_text="Recommendations for improvement (for end of term)")
+    
+    # Status and approval
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    submitted_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='received_workplans')
+    submitted_at = models.DateTimeField(null=True, blank=True)
+    reviewed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='reviewed_workplans')
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    review_comments = models.TextField(blank=True, help_text="Comments from academic master")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name_plural = "Teacher Workplans"
+
+    def __str__(self):
+        return f"{self.teacher.get_full_name()} - {self.subject.name} ({self.class_obj.full_name}) - {self.get_plan_type_display()}"
