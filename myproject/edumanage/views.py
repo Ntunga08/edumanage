@@ -7,6 +7,8 @@ from django.utils import timezone
 from django.http import JsonResponse
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, TeacherLogbookForm, TeacherWorkplanForm, LogbookReviewForm, WorkplanReviewForm
 from .models import User, Class, Student, StudentClass, Subject, Exam, Result, TeacherLogbook, TeacherWorkplan
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 def register(request):
     if request.method == "POST":
@@ -88,11 +90,30 @@ def students(request):
 @login_required
 def teachers(request):
     user = request.user
-    # Get all unique teacher names from Class
-    teacher_names = Class.objects.exclude(teacher='').values_list('teacher', flat=True).distinct()
-    teachers_data = []
-    for name in teacher_names:
-        classes = Class.objects.filter(teacher=name)
+    if user.is_staff:
+        # Get all users who are assigned as a teacher to any class
+        teacher_users = User.objects.filter(classes__isnull=False).distinct()
+        teachers_data = []
+        for teacher in teacher_users:
+            classes = Class.objects.filter(teacher=teacher)
+            class_list = []
+            total_students = 0
+            for c in classes:
+                student_count = c.current_students_count
+                class_list.append({
+                    'class_name': c.full_name,
+                    'subject': c.name,
+                    'student_count': student_count,
+                })
+                total_students += student_count
+            teachers_data.append({
+                'name': teacher.get_full_name(),
+                'classes': class_list,
+                'total_students': total_students,
+            })
+    else:
+        # Only show the logged-in teacher's data
+        classes = Class.objects.filter(teacher=user)
         class_list = []
         total_students = 0
         for c in classes:
@@ -103,18 +124,19 @@ def teachers(request):
                 'student_count': student_count,
             })
             total_students += student_count
-        teachers_data.append({
-            'name': name,
+        teachers_data = [{
+            'name': user.get_full_name(),
             'classes': class_list,
             'total_students': total_students,
-        })
+        }]
     context = {
         'user_name': user.username,
         'user_initials': user.username[0].upper() if user.username else 'U',
         'school_name': 'EduManage Academy',
         'teachers_data': teachers_data,
+        'is_admin': user.is_staff,
     }
-    return render(request, 'teachers.html', context)
+    return render(request, 'teacher.html', context)
 
 @login_required
 def subjects(request):
