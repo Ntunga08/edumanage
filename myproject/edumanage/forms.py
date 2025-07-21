@@ -34,7 +34,8 @@ class TeacherLogbookForm(forms.ModelForm):
         fields = [
             'subject', 'class_obj', 'report_type', 'report_date', 'academic_year', 'term',
             'topics_covered', 'activities_conducted', 'student_participation', 
-            'challenges_faced', 'solutions_implemented', 'next_lesson_plan', 'additional_notes'
+            'challenges_faced', 'solutions_implemented', 'next_lesson_plan', 'additional_notes',
+            'pdf_upload'
         ]
         widgets = {
             'report_date': forms.DateInput(attrs={'type': 'date'}),
@@ -62,6 +63,21 @@ class TeacherLogbookForm(forms.ModelForm):
                 field.widget.attrs.update({
                     'class': 'w-full px-3 lg:px-4 py-2.5 lg:py-3 rounded-xl text-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300'
                 })
+
+    def clean(self):
+        cleaned_data = super().clean()
+        pdf_upload = cleaned_data.get('pdf_upload')
+        # Check if any of the main fields are filled
+        main_fields = [
+            'topics_covered', 'activities_conducted', 'student_participation',
+            'challenges_faced', 'solutions_implemented', 'next_lesson_plan', 'additional_notes'
+        ]
+        filled_fields = [cleaned_data.get(f) for f in main_fields if cleaned_data.get(f)]
+        if pdf_upload and filled_fields:
+            raise forms.ValidationError('Please either upload a PDF or fill in the logbook fields, not both.')
+        if not pdf_upload and not filled_fields:
+            raise forms.ValidationError('You must either upload a PDF or fill in the logbook fields.')
+        return cleaned_data
 
 class TeacherWorkplanForm(forms.ModelForm):
     class Meta:

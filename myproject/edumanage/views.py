@@ -8,6 +8,10 @@ from django.http import JsonResponse
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, TeacherLogbookForm, TeacherWorkplanForm, LogbookReviewForm, WorkplanReviewForm
 from .models import User, Class, Student, StudentClass, Subject, Exam, Result, TeacherLogbook, TeacherWorkplan
 from django.contrib.auth import get_user_model
+from django.template.loader import render_to_string
+from weasyprint import HTML
+import tempfile
+
 User = get_user_model()
 
 def register(request):
@@ -309,16 +313,25 @@ def logbook_list(request):
 def logbook_create(request):
     user = request.user
     if request.method == 'POST':
-        form = TeacherLogbookForm(request.POST)
+        form = TeacherLogbookForm(request.POST, request.FILES)
         if form.is_valid():
             logbook = form.save(commit=False)
             logbook.teacher = user
             logbook.save()
+            # If the logbook was filled (not PDF), generate a PDF
+            if not logbook.pdf_upload:
+                # Render HTML for PDF
+                html_string = render_to_string('reports/logbook_pdf_template.html', {'logbook': logbook})
+                # Generate PDF
+                with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as output:
+                    HTML(string=html_string).write_pdf(output.name)
+                    # Save PDF to model
+                    with open(output.name, 'rb') as pdf_file:
+                        logbook.generated_pdf.save(f'logbook_{logbook.id}.pdf', pdf_file, save=True)
             messages.success(request, 'Logbook created successfully!')
-            return redirect('logbook_list')
+            return redirect('logbook_detail', logbook_id=logbook.id)
     else:
         form = TeacherLogbookForm()
-    
     context = {
         'user_name': user.username,
         'user_initials': user.username[0].upper() if user.username else 'U',

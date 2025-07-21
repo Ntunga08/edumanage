@@ -240,6 +240,10 @@ class TeacherLogbook(models.Model):
     solutions_implemented = models.TextField(help_text="Solutions or strategies implemented")
     next_lesson_plan = models.TextField(help_text="Plan for next lesson/period")
     additional_notes = models.TextField(blank=True, help_text="Any additional notes or observations")
+
+    # New fields for PDF upload and generation
+    pdf_upload = models.FileField(upload_to='logbooks/uploaded/', blank=True, null=True, help_text="Upload a PDF of your logbook (optional)")
+    generated_pdf = models.FileField(upload_to='logbooks/generated/', blank=True, null=True, help_text="System-generated PDF of your logbook (auto-filled)")
     
     # Status and approval
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')

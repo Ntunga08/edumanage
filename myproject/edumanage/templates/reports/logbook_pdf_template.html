@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Logbook PDF</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        h1, h2 { color: #0369a1; }
+        .section { margin-bottom: 1.5em; }
+        .label { font-weight: bold; color: #444; }
+        .value { margin-left: 0.5em; }
+        .header { border-bottom: 2px solid #0369a1; margin-bottom: 1em; padding-bottom: 0.5em; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>EduManage Academy</h1>
+        <h2>Teacher Logbook Report</h2>
+    </div>
+    <div class="section">
+        <span class="label">Teacher:</span><span class="value">{{ logbook.teacher.get_full_name }}</span><br>
+        <span class="label">Subject:</span><span class="value">{{ logbook.subject.name }}</span><br>
+        <span class="label">Class:</span><span class="value">{{ logbook.class_obj.full_name }}</span><br>
+        <span class="label">Report Type:</span><span class="value">{{ logbook.get_report_type_display }}</span><br>
+        <span class="label">Report Date:</span><span class="value">{{ logbook.report_date }}</span><br>
+        <span class="label">Academic Year:</span><span class="value">{{ logbook.academic_year }}</span><br>
+        <span class="label">Term:</span><span class="value">{{ logbook.term }}</span><br>
+    </div>
+    <div class="section">
+        <span class="label">Topics Covered:</span>
+        <div class="value">{{ logbook.topics_covered|linebreaksbr }}</div>
+    </div>
+    <div class="section">
+        <span class="label">Activities Conducted:</span>
+        <div class="value">{{ logbook.activities_conducted|linebreaksbr }}</div>
+    </div>
+    <div class="section">
+        <span class="label">Student Participation:</span>
+        <div class="value">{{ logbook.student_participation|linebreaksbr }}</div>
+    </div>
+    <div class="section">
+        <span class="label">Challenges Faced:</span>
+        <div class="value">{{ logbook.challenges_faced|linebreaksbr }}</div>
+    </div>
+    <div class="section">
+        <span class="label">Solutions Implemented:</span>
+        <div class="value">{{ logbook.solutions_implemented|linebreaksbr }}</div>
+    </div>
+    <div class="section">
+        <span class="label">Next Lesson Plan:</span>
+        <div class="value">{{ logbook.next_lesson_plan|linebreaksbr }}</div>
+    </div>
+    <div class="section">
+        <span class="label">Additional Notes:</span>
+        <div class="value">{{ logbook.additional_notes|linebreaksbr }}</div>
+    </div>
+</body>
+</html> 
