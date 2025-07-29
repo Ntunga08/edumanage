@@ -21,9 +21,9 @@
       </div>
       <p class="text-gray-600">
         {% if logbook %}
-          Update your logbook details and content.
+          Update your logbook details.
         {% else %}
-          Create a comprehensive teaching logbook with detailed analysis of your lessons, challenges, and solutions.
+          Create a simple teaching logbook with essential information.
         {% endif %}
       </p>
     </div>
@@ -32,18 +32,6 @@
     <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
       <form method="post" enctype="multipart/form-data" class="space-y-6">
         {% csrf_token %}
-        <div class="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <h2 class="text-lg font-semibold text-blue-800 mb-2">Logbook Submission Options</h2>
-          <p class="text-sm text-blue-700 mb-2">You can either <b>upload a PDF</b> of your logbook <b>or</b> fill in the fields below. <b>Do not do both.</b></p>
-          <div>
-            <label for="{{ form.pdf_upload.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Upload PDF (optional)</label>
-            {{ form.pdf_upload }}
-            {% if form.pdf_upload.errors %}
-              <p class="text-red-500 text-sm mt-1">{{ form.pdf_upload.errors.0 }}</p>
-            {% endif %}
-            <p class="text-xs text-gray-500 mt-1">If you upload a PDF, you do not need to fill the fields below.</p>
-          </div>
-        </div>
         
         <!-- Basic Information -->
         <div class="border-b border-gray-200 pb-6">
@@ -111,7 +99,7 @@
           </div>
         </div>
 
-        <!-- Content Sections -->
+        <!-- Essential Content -->
         <div class="space-y-6">
           <!-- Topics Covered -->
           <div>
@@ -122,7 +110,6 @@
             {% if form.topics_covered.errors %}
               <p class="text-red-500 text-sm mt-1">{{ form.topics_covered.errors.0 }}</p>
             {% endif %}
-            <p class="text-sm text-gray-500 mt-1">Describe the topics covered in this period</p>
           </div>
 
           <!-- Activities Conducted -->
@@ -134,7 +121,6 @@
             {% if form.activities_conducted.errors %}
               <p class="text-red-500 text-sm mt-1">{{ form.activities_conducted.errors.0 }}</p>
             {% endif %}
-            <p class="text-sm text-gray-500 mt-1">Describe the activities and exercises conducted</p>
           </div>
 
           <!-- Student Participation -->
@@ -146,31 +132,6 @@
             {% if form.student_participation.errors %}
               <p class="text-red-500 text-sm mt-1">{{ form.student_participation.errors.0 }}</p>
             {% endif %}
-            <p class="text-sm text-gray-500 mt-1">Describe student participation and engagement</p>
-          </div>
-
-          <!-- Challenges Faced -->
-          <div>
-            <label for="{{ form.challenges_faced.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-              Challenges Faced *
-            </label>
-            {{ form.challenges_faced }}
-            {% if form.challenges_faced.errors %}
-              <p class="text-red-500 text-sm mt-1">{{ form.challenges_faced.errors.0 }}</p>
-            {% endif %}
-            <p class="text-sm text-gray-500 mt-1">Describe any challenges or problems encountered</p>
-          </div>
-
-          <!-- Solutions Implemented -->
-          <div>
-            <label for="{{ form.solutions_implemented.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-              Solutions Implemented *
-            </label>
-            {{ form.solutions_implemented }}
-            {% if form.solutions_implemented.errors %}
-              <p class="text-red-500 text-sm mt-1">{{ form.solutions_implemented.errors.0 }}</p>
-            {% endif %}
-            <p class="text-sm text-gray-500 mt-1">Describe solutions or strategies implemented</p>
           </div>
 
           <!-- Next Lesson Plan -->
@@ -182,76 +143,21 @@
             {% if form.next_lesson_plan.errors %}
               <p class="text-red-500 text-sm mt-1">{{ form.next_lesson_plan.errors.0 }}</p>
             {% endif %}
-            <p class="text-sm text-gray-500 mt-1">Describe your plan for the next lesson/period</p>
-          </div>
-
-          <!-- Additional Notes -->
-          <div>
-            <label for="{{ form.additional_notes.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-              Additional Notes
-            </label>
-            {{ form.additional_notes }}
-            {% if form.additional_notes.errors %}
-              <p class="text-red-500 text-sm mt-1">{{ form.additional_notes.errors.0 }}</p>
-            {% endif %}
-            <p class="text-sm text-gray-500 mt-1">Any additional notes or observations (optional)</p>
           </div>
         </div>
 
-        <!-- Form Actions -->
-        <div class="flex items-center justify-between pt-6 border-t border-gray-200">
-          <div class="flex items-center space-x-4">
-            <button type="submit" 
-                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#0369a1] to-[#0ea5e9] text-white font-medium rounded-xl hover:from-[#0ea5e9] hover:to-[#0369a1] transition duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              {% if logbook %}Update Logbook{% else %}Create Logbook{% endif %}
-            </button>
-            
-            <a href="{% url 'logbook_list' %}" 
-               class="inline-flex items-center px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition duration-200">
-              Cancel
-            </a>
-          </div>
-          
-          {% if logbook and logbook.status == 'draft' %}
-          <a href="{% url 'logbook_submit' logbook.id %}" 
-             class="inline-flex items-center px-6 py-3 bg-green-500 text-white font-medium rounded-xl hover:bg-green-600 transition duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-            </svg>
-            Submit for Review
+        <!-- Submit Button -->
+        <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+          <a href="{% url 'logbook_list' %}" 
+             class="px-6 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition duration-200">
+            Cancel
           </a>
-          {% endif %}
+          <button type="submit" 
+                  class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-200">
+            {% if logbook %}Update Logbook{% else %}Create Logbook{% endif %}
+          </button>
         </div>
       </form>
-    </div>
-
-    <!-- Help Section -->
-    <div class="mt-6 bg-blue-50 rounded-xl p-4 lg:p-6">
-      <div class="flex items-center mb-3">
-        <div class="text-blue-500 mr-2">💡</div>
-        <h3 class="text-lg font-semibold text-gray-800">Tips for Writing Effective Logbooks</h3>
-      </div>
-      <div class="grid gap-3 grid-cols-1 md:grid-cols-2">
-        <div>
-          <h4 class="font-medium text-gray-700 mb-1">Be Specific</h4>
-          <p class="text-sm text-gray-600">Include specific details about topics, activities, and student responses.</p>
-        </div>
-        <div>
-          <h4 class="font-medium text-gray-700 mb-1">Analyze Challenges</h4>
-          <p class="text-sm text-gray-600">Identify problems and explain how you addressed them.</p>
-        </div>
-        <div>
-          <h4 class="font-medium text-gray-700 mb-1">Plan Ahead</h4>
-          <p class="text-sm text-gray-600">Outline clear plans for upcoming lessons based on current progress.</p>
-        </div>
-        <div>
-          <h4 class="font-medium text-gray-700 mb-1">Student Focus</h4>
-          <p class="text-sm text-gray-600">Describe student engagement and participation levels.</p>
-        </div>
-      </div>
     </div>
   </div>
 {% endblock %} 

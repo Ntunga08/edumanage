@@ -20,26 +20,6 @@
           </a>
           {% endif %}
           
-          {% if workplan.status == 'draft' %}
-          <a href="{% url 'workplan_submit' workplan.id %}" 
-             class="inline-flex items-center px-4 py-2 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition duration-200">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-            </svg>
-            Submit
-          </a>
-          {% endif %}
-          
-          {% if workplan.status == 'submitted' and is_admin %}
-          <a href="{% url 'workplan_review' workplan.id %}" 
-             class="inline-flex items-center px-4 py-2 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition duration-200">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            Review
-          </a>
-          {% endif %}
-          
           <a href="{% url 'workplan_list' %}" 
              class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition duration-200">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,259 +44,90 @@
           
           <span class="px-4 py-2 rounded-full text-sm font-medium 
             {% if workplan.plan_type == 'beginning_term' %}bg-blue-100 text-blue-800
-            {% elif workplan.plan_type == 'end_term' %}bg-green-100 text-green-800
+            {% elif workplan.plan_type == 'mid_term' %}bg-green-100 text-green-800
             {% else %}bg-purple-100 text-purple-800{% endif %}">
             {{ workplan.get_plan_type_display }}
           </span>
         </div>
         
         <div class="text-sm text-gray-500">
-          Created: {{ workplan.created_at|date:"M d, Y H:i" }}
-          {% if workplan.submitted_at %}
-          <br>Submitted: {{ workplan.submitted_at|date:"M d, Y H:i" }}
-          {% endif %}
+          Created: {{ workplan.created_at|date:"M d, Y" }}
         </div>
       </div>
     </div>
 
     <!-- Basic Information -->
-    <div class="grid gap-4 lg:gap-6 grid-cols-1 lg:grid-cols-2 mb-6">
-      <!-- Teacher & Subject Info -->
-      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Teacher & Subject Information</h2>
-        
-        <div class="space-y-4">
-          <div class="flex items-center">
-            <div class="w-12 h-12 bg-[#0369a1] rounded-full flex items-center justify-center text-white font-semibold text-lg mr-4">
-              {{ workplan.teacher.first_name|first|upper }}{{ workplan.teacher.last_name|first|upper }}
-            </div>
-            <div>
-              <p class="font-semibold text-gray-800">{{ workplan.teacher.get_full_name }}</p>
-              <p class="text-sm text-gray-500">{{ workplan.teacher.email }}</p>
-            </div>
-          </div>
-          
-          <div class="border-t border-gray-200 pt-4">
-            <div class="grid gap-3 grid-cols-1">
-              <div>
-                <span class="text-sm font-medium text-gray-500">Subject:</span>
-                <p class="text-lg font-semibold text-[#0369a1]">{{ workplan.subject.name }}</p>
-              </div>
-              
-              <div>
-                <span class="text-sm font-medium text-gray-500">Class:</span>
-                <p class="text-lg font-semibold text-gray-800">{{ workplan.class_obj.full_name }}</p>
-                <p class="text-sm text-gray-500">{{ workplan.class_obj.name }}</p>
-              </div>
-            </div>
-          </div>
+    <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6 mb-6">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Basic Information</h2>
+      <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Teacher</p>
+          <p class="text-lg font-semibold text-gray-900">{{ workplan.teacher.get_full_name }}</p>
         </div>
-      </div>
-
-      <!-- Plan Details -->
-      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Plan Details</h2>
-        
-        <div class="space-y-4">
-          <div>
-            <span class="text-sm font-medium text-gray-500">Plan Type:</span>
-            <p class="text-lg font-semibold text-gray-800">{{ workplan.get_plan_type_display }}</p>
-          </div>
-          
-          <div>
-            <span class="text-sm font-medium text-gray-500">Academic Year:</span>
-            <p class="text-lg font-semibold text-gray-800">{{ workplan.academic_year }}</p>
-          </div>
-          
-          <div>
-            <span class="text-sm font-medium text-gray-500">Term:</span>
-            <p class="text-lg font-semibold text-gray-800">{{ workplan.term }}</p>
-          </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600">Subject</p>
+          <p class="text-lg font-semibold text-gray-900">{{ workplan.subject.name }}</p>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600">Class</p>
+          <p class="text-lg font-semibold text-gray-900">{{ workplan.class_obj.full_name }}</p>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600">Plan Type</p>
+          <p class="text-lg font-semibold text-gray-900">{{ workplan.get_plan_type_display }}</p>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600">Academic Year</p>
+          <p class="text-lg font-semibold text-gray-900">{{ workplan.academic_year }}</p>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600">Term</p>
+          <p class="text-lg font-semibold text-gray-900">{{ workplan.term }}</p>
         </div>
       </div>
     </div>
 
-    <!-- Planning Content -->
+    <!-- Essential Content -->
     <div class="space-y-6">
       <!-- Learning Objectives -->
       <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-          <div class="text-blue-500 mr-3">🎯</div>
-          Learning Objectives
-        </h2>
-        <div class="bg-blue-50 rounded-lg p-4">
-          <p class="text-gray-700 leading-relaxed">{{ workplan.learning_objectives|linebreaks }}</p>
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">Learning Objectives</h3>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-gray-700">{{ workplan.learning_objectives|linebreaks }}</p>
         </div>
       </div>
 
       <!-- Topics to Cover -->
       <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-          <div class="text-green-500 mr-3">📚</div>
-          Topics to Cover
-        </h2>
-        <div class="bg-green-50 rounded-lg p-4">
-          <p class="text-gray-700 leading-relaxed">{{ workplan.topics_to_cover|linebreaks }}</p>
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">Topics to Cover</h3>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-gray-700">{{ workplan.topics_to_cover|linebreaks }}</p>
         </div>
       </div>
 
       <!-- Teaching Methods -->
       <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-          <div class="text-purple-500 mr-3">👨‍🏫</div>
-          Teaching Methods
-        </h2>
-        <div class="bg-purple-50 rounded-lg p-4">
-          <p class="text-gray-700 leading-relaxed">{{ workplan.teaching_methods|linebreaks }}</p>
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">Teaching Methods</h3>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-gray-700">{{ workplan.teaching_methods|linebreaks }}</p>
         </div>
       </div>
 
       <!-- Assessment Methods -->
       <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-          <div class="text-orange-500 mr-3">📊</div>
-          Assessment Methods
-        </h2>
-        <div class="bg-orange-50 rounded-lg p-4">
-          <p class="text-gray-700 leading-relaxed">{{ workplan.assessment_methods|linebreaks }}</p>
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">Assessment Methods</h3>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-gray-700">{{ workplan.assessment_methods|linebreaks }}</p>
         </div>
       </div>
 
-      <!-- Resources & Timeline -->
-      <div class="grid gap-6 grid-cols-1 lg:grid-cols-2">
-        <!-- Resources Needed -->
-        <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
-          <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-            <div class="text-indigo-500 mr-3">📦</div>
-            Resources Needed
-          </h2>
-          <div class="bg-indigo-50 rounded-lg p-4">
-            <p class="text-gray-700 leading-relaxed">{{ workplan.resources_needed|linebreaks }}</p>
-          </div>
-        </div>
-
-        <!-- Timeline -->
-        <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
-          <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-            <div class="text-red-500 mr-3">📅</div>
-            Timeline
-          </h2>
-          <div class="bg-red-50 rounded-lg p-4">
-            <p class="text-gray-700 leading-relaxed">{{ workplan.timeline|linebreaks }}</p>
-          </div>
+      <!-- Timeline -->
+      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">Timeline</h3>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-gray-700">{{ workplan.timeline|linebreaks }}</p>
         </div>
       </div>
     </div>
-
-    <!-- End of Term Analysis (if applicable) -->
-    {% if workplan.plan_type == 'end_term' %}
-    <div class="mt-6 space-y-6">
-      <div class="bg-gradient-to-r from-green-500 to-blue-500 rounded-xl p-4 lg:p-6">
-        <h2 class="text-xl font-semibold text-white mb-4 flex items-center">
-          <div class="text-white mr-3">📈</div>
-          End of Term Analysis
-        </h2>
-      </div>
-
-      <!-- Achievements -->
-      {% if workplan.achievements %}
-      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-          <div class="text-green-500 mr-3">🏆</div>
-          Achievements
-        </h2>
-        <div class="bg-green-50 rounded-lg p-4">
-          <p class="text-gray-700 leading-relaxed">{{ workplan.achievements|linebreaks }}</p>
-        </div>
-      </div>
-      {% endif %}
-
-      <!-- Challenges & Solutions -->
-      <div class="grid gap-6 grid-cols-1 lg:grid-cols-2">
-        <!-- Challenges Encountered -->
-        {% if workplan.challenges_encountered %}
-        <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
-          <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-            <div class="text-red-500 mr-3">⚠️</div>
-            Challenges Encountered
-          </h2>
-          <div class="bg-red-50 rounded-lg p-4">
-            <p class="text-gray-700 leading-relaxed">{{ workplan.challenges_encountered|linebreaks }}</p>
-          </div>
-        </div>
-        {% endif %}
-
-        <!-- Solutions Applied -->
-        {% if workplan.solutions_applied %}
-        <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
-          <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-            <div class="text-green-500 mr-3">✅</div>
-            Solutions Applied
-          </h2>
-          <div class="bg-green-50 rounded-lg p-4">
-            <p class="text-gray-700 leading-relaxed">{{ workplan.solutions_applied|linebreaks }}</p>
-          </div>
-        </div>
-        {% endif %}
-      </div>
-
-      <!-- Student Performance Analysis -->
-      {% if workplan.student_performance_analysis %}
-      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-          <div class="text-blue-500 mr-3">📊</div>
-          Student Performance Analysis
-        </h2>
-        <div class="bg-blue-50 rounded-lg p-4">
-          <p class="text-gray-700 leading-relaxed">{{ workplan.student_performance_analysis|linebreaks }}</p>
-        </div>
-      </div>
-      {% endif %}
-
-      <!-- Recommendations -->
-      {% if workplan.recommendations %}
-      <div class="bg-white rounded-xl shadow-xl p-4 lg:p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-          <div class="text-purple-500 mr-3">💡</div>
-          Recommendations
-        </h2>
-        <div class="bg-purple-50 rounded-lg p-4">
-          <p class="text-gray-700 leading-relaxed">{{ workplan.recommendations|linebreaks }}</p>
-        </div>
-      </div>
-      {% endif %}
-    </div>
-    {% endif %}
-
-    <!-- Review Section (if reviewed) -->
-    {% if workplan.reviewed_by %}
-    <div class="mt-6 bg-white rounded-xl shadow-xl p-4 lg:p-6">
-      <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-        <div class="text-blue-500 mr-3">👨‍🏫</div>
-        Academic Master Review
-      </h2>
-      
-      <div class="grid gap-4 grid-cols-1 md:grid-cols-2">
-        <div>
-          <span class="text-sm font-medium text-gray-500">Reviewed by:</span>
-          <p class="font-semibold text-gray-800">{{ workplan.reviewed_by.get_full_name }}</p>
-        </div>
-        
-        <div>
-          <span class="text-sm font-medium text-gray-500">Reviewed on:</span>
-          <p class="font-semibold text-gray-800">{{ workplan.reviewed_at|date:"M d, Y H:i" }}</p>
-        </div>
-      </div>
-      
-      {% if workplan.review_comments %}
-      <div class="mt-4">
-        <span class="text-sm font-medium text-gray-500">Comments:</span>
-        <div class="bg-blue-50 rounded-lg p-4 mt-2">
-          <p class="text-gray-700 leading-relaxed">{{ workplan.review_comments|linebreaks }}</p>
-        </div>
-      </div>
-      {% endif %}
-    </div>
-    {% endif %}
   </div>
 {% endblock %} 
