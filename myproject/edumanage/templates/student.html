@@ -1,9 +1,9 @@
 {% extends "home.html" %}
 {% block content %}
   <!-- Main Content -->
-  <div class="ml-72 min-h-screen relative p-8">
+  <div class="ml-64 min-h-screen relative p-4">
     <!-- Students Header -->
-    <div class="bg-white rounded-xl shadow-xl p-8 mb-8">
+    <div class="bg-white rounded-xl shadow-xl p-6 mb-6">
       <h1 class="text-3xl font-bold text-gray-800 mb-2">Students</h1>
       <p class="text-gray-600">All students enrolled in EduManage Academy</p>
       <div class="mt-4">
@@ -49,7 +49,7 @@
         </div>
       </div>
       {% empty %}
-      <div class="col-span-full text-center py-12 text-gray-500">
+      <div class="col-span-full text-center py-8 text-gray-500">
         <div class="text-4xl mb-2">👥</div>
         <p>No students available</p>
         <p class="text-sm mt-2">Add students through the admin interface</p>
@@ -59,7 +59,7 @@
 
     <!-- Add Student Button (Admin Only) -->
     {% if user.is_staff %}
-    <div class="mt-8 text-center">
+    <div class="mt-6 text-center">
       <a href="/admin/edumanage/student/add/" 
          class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#0369a1] to-[#0ea5e9] text-white font-medium rounded-lg hover:from-[#0ea5e9] hover:to-[#0369a1] transition duration-200">
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
