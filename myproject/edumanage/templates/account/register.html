@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - EduManage</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -47,11 +47,11 @@
             </div>
             <h1 class="text-xl lg:text-2xl font-bold text-gray-800 mb-1 lg:mb-2">Create Account</h1>
             <p class="text-gray-600 text-xs lg:text-sm">Join EduManage today</p>
-        </div>
+    </div>
         
         <!-- Registration Form -->
         <form method="post" class="space-y-4 lg:space-y-5">
-            {% csrf_token %}
+      {% csrf_token %}
             
             <!-- Username Field -->
             <div class="space-y-1 lg:space-y-2">
@@ -113,25 +113,25 @@
                             <span class="mr-1">⚠️</span>
                             {{ form.password2.errors.0 }}
                         </div>
-                    {% endif %}
-                </div>
+          {% endif %}
+        </div>
             </div>
             
             <!-- Register Button -->
             <button type="submit" class="register-btn w-full text-white py-2.5 lg:py-3 px-4 rounded-xl font-medium text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-4 lg:mt-6">
-                Create Account
-            </button>
-        </form>
+        Create Account
+      </button>
+    </form>
         
         <!-- Login Link -->
         <div class="text-center mt-6 lg:mt-8 pt-4 lg:pt-6 border-t border-gray-200">
             <p class="text-gray-600 text-xs lg:text-sm">
-                Already have an account? 
+      Already have an account?
                 <a href="{% url 'login' %}" class="text-blue-600 hover:text-blue-800 font-medium underline transition-colors">
                     Sign in here
                 </a>
-            </p>
+    </p>
         </div>
-    </div>
+  </div>
 </body>
 </html>

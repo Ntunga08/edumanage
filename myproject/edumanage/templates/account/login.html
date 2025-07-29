@@ -68,13 +68,13 @@
                     Email Address
                 </label>
                 <div class="relative">
-                    {{ form.username }}
-                    {% if form.username.errors %}
+                {{ form.username }}
+                {% if form.username.errors %}
                         <div class="text-red-500 text-xs mt-1 flex items-center">
                             <span class="mr-1">⚠️</span>
-                            {{ form.username.errors.0 }}
-                        </div>
-                    {% endif %}
+                        {{ form.username.errors.0 }}
+                    </div>
+                {% endif %}
                 </div>
             </div>
             
@@ -84,13 +84,13 @@
                     Password
                 </label>
                 <div class="relative">
-                    {{ form.password }}
-                    {% if form.password.errors %}
+                {{ form.password }}
+                {% if form.password.errors %}
                         <div class="text-red-500 text-xs mt-1 flex items-center">
                             <span class="mr-1">⚠️</span>
-                            {{ form.password.errors.0 }}
-                        </div>
-                    {% endif %}
+                        {{ form.password.errors.0 }}
+                    </div>
+                {% endif %}
                 </div>
             </div>
             
